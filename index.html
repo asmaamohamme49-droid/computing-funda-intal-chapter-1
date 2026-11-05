@@ -1,0 +1,2022 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Computing Fundamentals — Chapter 1</title>
+<style>
+  *{box-sizing:border-box}
+  :root{
+    --bg:#f4f8fc; --card:#ffffff; --text:#0f2440; --muted:#5b7189;
+    --accent:#1e5fa8; --accent2:#2e86de; --border:#dbe6f3;
+    --ok:#1a7f4b; --okbg:#e6f6ed; --bad:#b3261e; --badbg:#fdeceb;
+    --chip:#eef4fb; --shadow:0 1px 2px rgba(15,36,64,.06),0 6px 18px rgba(15,36,64,.05);
+  }
+  [data-theme="dark"]{
+    --bg:#0b1622; --card:#12202f; --text:#e6eef7; --muted:#9fb3c8;
+    --accent:#5aa9f0; --accent2:#7cc0ff; --border:#1e3348;
+    --ok:#54d18a; --okbg:#12301f; --bad:#ff8a80; --badbg:#33191a;
+    --chip:#17293b; --shadow:0 1px 2px rgba(0,0,0,.4);
+  }
+  body{
+    margin:0;background:var(--bg);color:var(--text);
+    font-family:'Segoe UI',system-ui,-apple-system,'Tahoma',sans-serif;
+    line-height:1.65;-webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:980px;margin:0 auto;padding:0 16px}
+  header.topbar{
+    background:var(--card);border-bottom:1px solid var(--border);
+    position:sticky;top:0;z-index:20;
+  }
+  .topbar .wrap{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 16px}
+  .brand{display:flex;align-items:center;gap:12px;min-width:0}
+  .logo{
+    width:42px;height:42px;border-radius:12px;flex:0 0 auto;
+    background:linear-gradient(135deg,var(--accent),var(--accent2));
+    color:#fff;display:grid;place-items:center;font-weight:800;letter-spacing:.5px;
+  }
+  .brand h1{font-size:16px;margin:0;line-height:1.2}
+  .brand p{margin:2px 0 0;font-size:12px;color:var(--muted)}
+  .tools{display:flex;gap:8px;flex:0 0 auto}
+  .icon-btn{
+    border:1px solid var(--border);background:var(--card);color:var(--text);
+    border-radius:10px;padding:8px 12px;font-size:13px;font-weight:600;cursor:pointer;
+  }
+  .icon-btn:hover{border-color:var(--accent);color:var(--accent)}
+  nav.tabs{background:var(--card);border-bottom:1px solid var(--border);position:sticky;top:67px;z-index:19}
+  nav.tabs .wrap{display:flex;gap:6px;overflow-x:auto;padding:8px 16px}
+  nav.tabs button{
+    border:none;background:transparent;color:var(--muted);cursor:pointer;
+    padding:8px 14px;border-radius:10px;font-size:14px;font-weight:600;white-space:nowrap;
+    font-family:inherit;
+  }
+  nav.tabs button:hover{background:var(--chip);color:var(--text)}
+  nav.tabs button.active{background:var(--accent);color:#fff}
+  main{padding:22px 0 60px}
+  .view{display:none}
+  .view.active{display:block;animation:fade .25s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(4px)}to{opacity:1;transform:none}}
+  .card{
+    background:var(--card);border:1px solid var(--border);border-radius:16px;
+    padding:20px;box-shadow:var(--shadow);
+  }
+  .card + .card{margin-top:16px}
+  h2.sec{font-size:20px;margin:0 0 6px}
+  h3.sub{font-size:15px;margin:22px 0 8px;color:var(--accent);letter-spacing:.2px}
+  .muted{color:var(--muted);font-size:14px}
+  .progress{height:10px;background:var(--chip);border-radius:999px;overflow:hidden;margin:10px 0}
+  .progress .bar{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:999px;transition:width .35s ease}
+  .progress.sm{height:6px}
+  .grid{display:grid;gap:14px}
+  .grid.stats{grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-top:16px}
+  .grid.stages{grid-template-columns:repeat(auto-fit,minmax(210px,1fr));margin-top:16px}
+  .stat{padding:16px;text-align:center}
+  .stat .num{display:block;font-size:24px;font-weight:800;color:var(--accent)}
+  .stat .lbl{font-size:12.5px;color:var(--muted)}
+  .stage{cursor:pointer;transition:transform .15s,border-color .15s}
+  .stage:hover{transform:translateY(-2px);border-color:var(--accent)}
+  .stage h4{margin:0 0 4px;font-size:15px}
+  .stage p{margin:0;font-size:13px;color:var(--muted)}
+  .stage .badge{display:inline-block;font-size:11px;font-weight:700;padding:2px 8px;border-radius:999px;background:var(--chip);color:var(--accent);margin-bottom:8px}
+  .btn{
+    border:1px solid var(--border);background:var(--card);color:var(--text);
+    padding:10px 16px;border-radius:10px;font-size:14px;font-weight:600;cursor:pointer;
+    font-family:inherit;transition:all .15s;
+  }
+  .btn:hover{border-color:var(--accent);color:var(--accent)}
+  .btn.primary{background:var(--accent);border-color:var(--accent);color:#fff}
+  .btn.primary:hover{filter:brightness(1.08);color:#fff}
+  .btn:disabled{opacity:.45;cursor:not-allowed}
+  .btn.ghost{background:transparent}
+  .toolbar{display:flex;flex-wrap:wrap;gap:8px;align-items:center;justify-content:space-between;margin-bottom:14px}
+  .toolbar .right{display:flex;gap:8px;flex-wrap:wrap}
+  .counter-pill{font-size:13px;font-weight:700;color:var(--accent);background:var(--chip);padding:6px 12px;border-radius:999px}
+  .txt{white-space:pre-line;font-size:15px}
+  .en{direction:ltr;text-align:left}
+  .ar{direction:rtl;text-align:right;font-family:'Tahoma','Segoe UI',sans-serif;line-height:1.95;font-size:15px}
+  .block{border:1px solid var(--border);border-radius:12px;padding:14px 16px;margin-top:12px;background:var(--bg)}
+  .block .tag{display:inline-block;font-size:11px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--muted);margin-bottom:6px}
+  .block.explain{border-left:4px solid var(--accent2)}
+  .block.tip{border-left:4px solid #e6a817}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}
+  .chip{background:var(--chip);border:1px solid var(--border);border-radius:999px;padding:5px 12px;font-size:13px}
+  .chip b{color:var(--accent)}
+  .flashcard{cursor:pointer;min-height:260px;display:flex;flex-direction:column;justify-content:center;position:relative}
+  .flashcard .q{font-size:19px;font-weight:700;margin:14px 0 0}
+  .flashcard .hint{margin-top:22px;color:var(--muted);font-size:13.5px;font-style:italic}
+  .answer{margin-top:18px;border-top:1px dashed var(--border);padding-top:14px}
+  .answer .en{font-size:15px}
+  .answer .ar{margin-top:10px;color:var(--muted)}
+  .dot-reviewed{position:absolute;top:16px;right:16px;font-size:12px;color:var(--ok);font-weight:700}
+  [dir="rtl"] .dot-reviewed{right:auto;left:16px}
+  .points{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+  .points li{
+    display:flex;gap:12px;align-items:flex-start;border:1px solid var(--border);
+    border-radius:12px;padding:12px 14px;background:var(--bg);
+  }
+  .points li .idx{
+    flex:0 0 auto;width:28px;height:28px;border-radius:8px;background:var(--accent);color:#fff;
+    display:grid;place-items:center;font-size:13px;font-weight:800;
+  }
+  .points li .body{flex:1;min-width:0}
+  .points li .body .en{font-size:14.5px}
+  .points li .body .ar{font-size:14px;color:var(--muted);margin-top:4px}
+  .points li input{width:18px;height:18px;accent-color:var(--accent);cursor:pointer;margin-top:6px}
+  .opt{
+    display:block;width:100%;text-align:left;border:1.5px solid var(--border);background:var(--card);
+    color:var(--text);padding:12px 14px;border-radius:12px;margin-bottom:9px;cursor:pointer;
+    font-size:14.5px;font-family:inherit;transition:all .12s;
+  }
+  [dir="rtl"] .opt{text-align:right}
+  .opt:hover:not(:disabled){border-color:var(--accent)}
+  .opt.sel{border-color:var(--accent);background:var(--chip)}
+  .opt.correct{border-color:var(--ok);background:var(--okbg);color:var(--ok);font-weight:700}
+  .opt.wrong{border-color:var(--bad);background:var(--badbg);color:var(--bad);font-weight:700}
+  .opt:disabled{cursor:default}
+  .feedback{border-radius:12px;padding:14px 16px;margin-top:14px;font-size:14.5px}
+  .feedback.ok{background:var(--okbg);border:1px solid var(--ok);color:var(--ok)}
+  .feedback.bad{background:var(--badbg);border:1px solid var(--bad);color:var(--bad)}
+  .feedback .exp{color:var(--text);margin-top:8px;font-size:14px}
+  .feedback .exp .ar{color:var(--muted);font-size:13.5px}
+  .exam-head{display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:6px}
+  .topic-tag{font-size:11.5px;font-weight:700;color:var(--muted);background:var(--chip);padding:4px 10px;border-radius:999px}
+  .score-big{font-size:46px;font-weight:800;color:var(--accent);line-height:1}
+  .level-pill{display:inline-block;padding:6px 14px;border-radius:999px;font-weight:800;font-size:14px;background:var(--chip);color:var(--accent)}
+  .wrong-item{border:1px solid var(--border);border-radius:12px;padding:14px;background:var(--bg);margin-bottom:10px}
+  .wrong-item .q{font-weight:700;font-size:14.5px}
+  .wrong-item .line{font-size:13.5px;margin-top:6px}
+  .wrong-item .line b{color:var(--accent)}
+  .center{text-align:center}
+  .mt{margin-top:16px}
+  footer{padding:24px 0;text-align:center;color:var(--muted);font-size:12.5px}
+  @media(max-width:600px){
+    .brand h1{font-size:14px}
+    .flashcard .q{font-size:17px}
+    .card{padding:16px}
+  }
+</style>
+</head>
+<body>
+
+<header class="topbar">
+  <div class="wrap">
+    <div class="brand">
+      <div class="logo">CF</div>
+      <div>
+        <h1 id="appTitle">Computing Fundamentals</h1>
+        <p id="appSub">Chapter 1 — Introduction to Computing</p>
+      </div>
+    </div>
+    <div class="tools">
+      <button class="icon-btn" id="langBtn" onclick="toggleLang()">AR</button>
+      <button class="icon-btn" id="themeBtn" onclick="toggleTheme()">🌙</button>
+    </div>
+  </div>
+</header>
+
+<nav class="tabs"><div class="wrap" id="tabs"></div></nav>
+
+<main class="wrap">
+  <section class="view" id="view-dashboard"></section>
+  <section class="view" id="view-study"></section>
+  <section class="view" id="view-cards"></section>
+  <section class="view" id="view-summary"></section>
+  <section class="view" id="view-exam"></section>
+  <section class="view" id="view-results"></section>
+</main>
+
+<footer class="wrap" id="footNote">Al-Azhar University (Girls Branch) — Faculty of Computers and Artificial Intelligence · Study companion</footer>
+
+<script>
+/* =========================================================
+   1. UI TRANSLATIONS
+   ========================================================= */
+const T = {
+  en: {
+    dashboard:"Dashboard", study:"Study & Explanation", cards:"Flashcards", summary:"Summary", exam:"Final Exam",
+    appTitle:"Computing Fundamentals", appSub:"Chapter 1 — Introduction to Computing",
+    chapterProgress:"Chapter progress", continueLearning:"Continue Learning",
+    partsStudied:"Parts studied", cardsReviewed:"Cards reviewed", examScore:"Final exam score", notTaken:"Not taken",
+    stages:"Study stages", stage1:"Study & Explanation", stage1d:"Chapter explained part by part with translation.",
+    stage2:"20 Essay Flashcards", stage2d:"Question on the front, model answer on the back.",
+    stage3:"20 Key Points", stage3d:"The whole chapter in 20 memorizable points.",
+    stage4:"Final Exam", stage4d:"60 questions, one at a time, with instant feedback.",
+    open:"Open",
+    originalText:"Original text (English)", arabicTranslation:"Arabic translation",
+    simpleExplanation:"Simple explanation", keyTerms:"Key terms", examplesNotes:"Examples & notes",
+    examTips:"Must memorise for the exam", prevPart:"← Previous Part", nextPart:"Next Part →",
+    part:"Part", studied:"✓ Studied", markStudied:"Mark as studied",
+    showAnswer:"Show Answer", hideAnswer:"Hide Answer", prevCard:"← Previous", nextCard:"Next →",
+    shuffle:"Shuffle Cards", markReviewed:"Mark as Reviewed", card:"Card", reviewed:"Reviewed",
+    clickReveal:"Click the card to reveal the model answer",
+    markImportant:"Mark as important", pointsMarked:"points marked as important",
+    startExam:"Start Exam", examIntro:"60 questions covering the whole chapter, one question at a time. You must confirm your answer before the correct answer appears.",
+    question:"Question", confirmAnswer:"Confirm Answer", nextQuestion:"Next Question", showResults:"Show Results",
+    correct:"Correct!", wrong:"Wrong!", explanation:"Explanation", correctAnswer:"Correct answer", yourAnswer:"Your answer",
+    selectAnswer:"Please select an answer first.",
+    results:"Results", finalScore:"Final Score", percentage:"Percentage", correctAnswers:"Correct Answers",
+    wrongAnswers:"Wrong Answers", level:"Level", reviewWrong:"Review Wrong Answers", hideReview:"Hide Review",
+    retake:"Retake Exam", backDash:"Back to Dashboard", needsReview:"Topics to review",
+    allCorrect:"Excellent — no wrong answers to review!",
+    noExam:"No exam has been completed yet.", startNow:"Start the exam now",
+    q:"Question", of:"of", none:"None",
+    langLabel:"AR", levelExc:"Excellent", levelVG:"Very Good", levelGood:"Good", levelPass:"Pass", levelFail:"Needs Review"
+  },
+  ar: {
+    dashboard:"لوحة التحكم", study:"الشرح والمذاكرة", cards:"البطاقات", summary:"الملخص", exam:"الاختبار النهائي",
+    appTitle:"أساسيات الحوسبة", appSub:"الفصل الأول — مقدمة في الحوسبة",
+    chapterProgress:"نسبة إنجاز الفصل", continueLearning:"متابعة المذاكرة",
+    partsStudied:"أجزاء تمت مذاكرتها", cardsReviewed:"بطاقات تمت مراجعتها", examScore:"نتيجة الاختبار النهائي", notTaken:"لم يُؤدَّ بعد",
+    stages:"مراحل المذاكرة", stage1:"الشرح والمذاكرة", stage1d:"شرح الفصل جزءًا جزءًا مع الترجمة.",
+    stage2:"20 بطاقة مقالية", stage2d:"السؤال في الأمام والإجابة النموذجية في الخلف.",
+    stage3:"20 نقطة أساسية", stage3d:"الفصل كله في 20 نقطة سهلة الحفظ.",
+    stage4:"الاختبار النهائي", stage4d:"60 سؤالًا، سؤالًا بعد سؤال، مع تصحيح فوري.",
+    open:"فتح",
+    originalText:"النص الأصلي (إنجليزي)", arabicTranslation:"الترجمة العربية",
+    simpleExplanation:"شرح مبسط", keyTerms:"المصطلحات العلمية", examplesNotes:"أمثلة وملاحظات",
+    examTips:"أهم ما يُحفظ للامتحان", prevPart:"← الجزء السابق", nextPart:"الجزء التالي →",
+    part:"الجزء", studied:"✓ تمت المذاكرة", markStudied:"تحديد كمذاكَر",
+    showAnswer:"إظهار الإجابة", hideAnswer:"إخفاء الإجابة", prevCard:"← السابق", nextCard:"التالي →",
+    shuffle:"خلط البطاقات", markReviewed:"تحديد كمراجَعة", card:"بطاقة", reviewed:"تمت المراجعة",
+    clickReveal:"اضغط على البطاقة لإظهار الإجابة النموذجية",
+    markImportant:"تحديد كنقطة مهمة", pointsMarked:"نقطة محددة كأهمية",
+    startExam:"ابدأ الاختبار", examIntro:"60 سؤالًا تغطي الفصل بالكامل، سؤالًا واحدًا في كل مرة. يجب تأكيد إجابتك قبل ظهور الإجابة الصحيحة.",
+    question:"السؤال", confirmAnswer:"تأكيد الإجابة", nextQuestion:"السؤال التالي", showResults:"عرض النتيجة",
+    correct:"إجابة صحيحة!", wrong:"إجابة خاطئة!", explanation:"التفسير", correctAnswer:"الإجابة الصحيحة", yourAnswer:"إجابتك",
+    selectAnswer:"من فضلك اختر إجابة أولًا.",
+    results:"النتيجة", finalScore:"الدرجة النهائية", percentage:"النسبة المئوية", correctAnswers:"إجابات صحيحة",
+    wrongAnswers:"إجابات خاطئة", level:"المستوى", reviewWrong:"مراجعة الأسئلة الخاطئة", hideReview:"إخفاء المراجعة",
+    retake:"إعادة الاختبار", backDash:"العودة للوحة التحكم", needsReview:"موضوعات تحتاج مراجعة",
+    allCorrect:"ممتاز — لا توجد أسئلة خاطئة للمراجعة!",
+    noExam:"لم يتم أداء أي اختبار حتى الآن.", startNow:"ابدأ الاختبار الآن",
+    q:"سؤال", of:"من", none:"لا يوجد",
+    langLabel:"EN", levelExc:"ممتاز", levelVG:"جيد جدًا", levelGood:"جيد", levelPass:"مقبول", levelFail:"يحتاج مراجعة"
+  }
+};
+let lang = "en";
+function t(k){ return (T[lang] && T[lang][k]) || k; }
+
+/* =========================================================
+   2. CHAPTER CONTENT — STUDY PARTS
+   ========================================================= */
+const PARTS = [
+{
+  title:"Introduction & 1.1 What Is a Computer?",
+  titleAr:"المقدمة و1.1 ما هو الكمبيوتر؟",
+  en:`Chapter 1 — Introduction to Computing
+
+A computer is an electronic system that accepts data as input, processes the data according to a set of instructions, produces information as output, and stores data and information for future use.
+
+A computer system is not simply a collection of independent components. Its hardware, software, data, and users work together to perform computational tasks and communicate with external devices.
+
+Understanding these fundamental concepts provides the foundation for studying computer hardware, memory, software, computer architecture, and other areas of computing.
+
+1.1 What Is a Computer?
+A computer is an electronic device that operates under the control of instructions stored in its memory. It can:
+• Accept data as input.
+• Process data according to specified rules.
+• Produce useful information as output.
+• Store information for future use.
+
+The basic operation of a computer can therefore be represented as:
+Input → Processing → Output → Storage`,
+  ar:`الفصل الأول — مقدمة في الحوسبة
+
+الكمبيوتر هو نظام إلكتروني يستقبل البيانات كمدخلات (Input)، ويعالج هذه البيانات وفقًا لمجموعة من التعليمات، ويُنتج المعلومات كمخرجات (Output)، ويخزّن البيانات والمعلومات لاستخدامها في المستقبل.
+
+ونظام الكمبيوتر ليس مجرد مجموعة من المكونات المستقلة؛ فالمكونات المادية (Hardware) والبرمجيات (Software) والبيانات (Data) والمستخدمون (Users) تعمل معًا لتنفيذ المهام الحاسوبية والتواصل مع الأجهزة الخارجية.
+
+وفهم هذه المفاهيم الأساسية يوفّر الأساس لدراسة مكونات الكمبيوتر المادية والذاكرة والبرمجيات وبنية الكمبيوتر وغيرها من مجالات الحوسبة.
+
+1.1 ما هو الكمبيوتر؟
+الكمبيوتر هو جهاز إلكتروني يعمل تحت سيطرة تعليمات مخزّنة في ذاكرته. وهو يستطيع:
+• استقبال البيانات كمدخلات.
+• معالجة البيانات وفقًا لقواعد محددة.
+• إنتاج معلومات مفيدة كمخرجات.
+• تخزين المعلومات لاستخدامها في المستقبل.
+
+ولذلك يمكن تمثيل العملية الأساسية للكمبيوتر على النحو التالي:
+مدخلات → معالجة → مخرجات → تخزين`,
+  explain:`تخيّل إن الكمبيوتر زي موظف شاطر: بتديله الشغل (Data)، وهو بيشتغل عليه بالتعليمات اللي في دماغه (Memory)، وبيطلّعلك النتيجة (Information)، وبيحفظ الشغل عشان ترجعله بعدين.
+أهم فكرة هنا: أي كمبيوتر بيعمل 4 خطوات بالترتيب: Input ← Processing ← Output ← Storage.
+وكمان: الكمبيوتر مش مجرد قطع متجمعة، لازم Hardware + Software + Data + Users يشتغلوا مع بعض.`,
+  terms:[["Computer","الكمبيوتر / الحاسب"],["Input","المدخلات"],["Processing","المعالجة"],["Output","المخرجات"],["Storage","التخزين"],["Instructions","التعليمات"],["Hardware","المكونات المادية"],["Software","البرمجيات"],["Data","البيانات"],["Users","المستخدمون"]],
+  tips:`احفظ تعريف الكمبيوتر حرفيًا، واحفظ الترتيب: Input → Processing → Output → Storage. واعرف إن نظام الكمبيوتر = Hardware + Software + Data + Users.`
+},
+{
+  title:"1.2 Functions of a Computer",
+  titleAr:"1.2 وظائف الكمبيوتر",
+  en:`1.2 Functions of a Computer
+
+A digital computer performs several fundamental functions that enable it to transform input data into useful results.
+
+The major functions of a computer include:
+1. Input
+2. Processing
+3. Output
+4. Storage
+5. Control
+
+1.2.1 Input
+Input is the process of entering data and instructions into a computer system.
+Examples include:
+• Typing text using a keyboard.
+• Selecting an item using a mouse.
+• Recording sound using a microphone.
+• Capturing an image using a camera.
+
+1.2.2 Processing
+Processing is the operation performed by the computer to transform input data into meaningful results.
+The processor executes instructions and performs operations on the data.
+
+1.2.3 Output
+Output is the information or result produced by the computer after processing.
+Examples include:
+• Displaying information on a monitor.
+• Printing a document.
+• Producing sound through speakers.
+• Displaying a calculated result.
+
+1.2.4 Storage
+Computers can store data, programs, and information for later use.
+Storage may be temporary or long-term depending on the type of memory or storage device used.
+
+1.2.5 Control
+The computer controls and coordinates the different operations performed by its components according to the instructions provided by programs.`,
+  ar:`1.2 وظائف الكمبيوتر
+
+يقوم الكمبيوتر الرقمي بعدة وظائف أساسية تمكّنه من تحويل بيانات الإدخال إلى نتائج مفيدة.
+
+تشمل الوظائف الرئيسية للكمبيوتر:
+1. الإدخال
+2. المعالجة
+3. الإخراج
+4. التخزين
+5. التحكم
+
+1.2.1 الإدخال
+الإدخال هو عملية إدخال البيانات والتعليمات إلى نظام الكمبيوتر.
+أمثلة:
+• كتابة نص باستخدام لوحة المفاتيح.
+• اختيار عنصر باستخدام الفأرة.
+• تسجيل الصوت باستخدام الميكروفون.
+• التقاط صورة باستخدام الكاميرا.
+
+1.2.2 المعالجة
+المعالجة هي العملية التي يقوم بها الكمبيوتر لتحويل بيانات الإدخال إلى نتائج ذات معنى.
+ينفّذ المعالج التعليمات ويجري العمليات على البيانات.
+
+1.2.3 الإخراج
+الإخراج هو المعلومات أو النتيجة التي ينتجها الكمبيوتر بعد المعالجة.
+أمثلة:
+• عرض المعلومات على الشاشة.
+• طباعة مستند.
+• إنتاج صوت عبر السماعات.
+• عرض نتيجة محسوبة.
+
+1.2.4 التخزين
+يستطيع الكمبيوتر تخزين البيانات والبرامج والمعلومات لاستخدامها لاحقًا.
+وقد يكون التخزين مؤقتًا أو طويل المدى حسب نوع الذاكرة أو جهاز التخزين المستخدم.
+
+1.2.5 التحكم
+يتحكم الكمبيوتر في العمليات المختلفة التي تنفّذها مكوناته وينسّق بينها وفقًا للتعليمات التي تقدّمها البرامج.`,
+  explain:`خمس وظائف أساسية: إدخال، معالجة، إخراج، تخزين، وتحكّم.
+التحكّم هو "المدير" اللي بينظّم كل حاجة ويمشيها حسب تعليمات البرنامج.
+خلي بالك: التخزين ممكن يكون مؤقت (زي الذاكرة RAM) أو طويل المدى (زي HDD/SSD).`,
+  terms:[["Input","الإدخال"],["Processing","المعالجة"],["Output","الإخراج"],["Storage","التخزين"],["Control","التحكم"],["Processor","المعالج"],["Temporary storage","تخزين مؤقت"],["Long-term storage","تخزين طويل المدى"]],
+  tips:`عدّد الوظائف الخمس بالترتيب، واعرف تعريف كل واحدة. سؤال متكرر: "أي وظيفة تنسّق بين المكونات؟" الإجابة: Control.`
+},
+{
+  title:"1.3 Computer System Components",
+  titleAr:"1.3 مكونات نظام الكمبيوتر",
+  en:`1.3 Computer System Components
+
+A computer system consists of several components that work together. The main components include:
+• Hardware
+• Software
+• Data
+• Users
+
+1.3.1 Hardware
+Hardware refers to the physical components of a computer system that can be seen and touched.
+Examples include: monitor, keyboard, mouse, CPU, memory, motherboard, storage devices, graphics cards, sound cards.
+Hardware provides the physical resources required for computation.
+
+1.3.2 Software
+Software is a collection of programs, instructions, and related data that tells a computer what to do and how to perform specific operations.
+Software is intangible and cannot be physically touched.
+Software can be broadly classified into:
+1. System Software
+2. Application Software
+A detailed discussion of software will be presented in a later chapter.
+
+1.3.3 Data
+Data refers to raw facts, values, symbols, or observations that can be processed by a computer.
+Data may take many forms, including: numbers, text, names, dates, images, sounds, measurements, symbols.
+
+1.3.4 Users
+Users are people who interact with computer systems.
+Examples include: students, programmers, system administrators, other computer users.`,
+  ar:`1.3 مكونات نظام الكمبيوتر
+
+يتكوّن نظام الكمبيوتر من عدة مكونات تعمل معًا. وتشمل المكونات الرئيسية:
+• المكونات المادية (Hardware)
+• البرمجيات (Software)
+• البيانات (Data)
+• المستخدمون (Users)
+
+1.3.1 المكونات المادية
+تشير المكونات المادية إلى الأجزاء الفيزيائية لنظام الكمبيوتر التي يمكن رؤيتها ولمسها.
+أمثلة: الشاشة، لوحة المفاتيح، الفأرة، وحدة المعالجة المركزية، الذاكرة، اللوحة الأم، أجهزة التخزين، كروت الرسومات، كروت الصوت.
+وتوفّر المكونات المادية الموارد الفيزيائية اللازمة للحوسبة.
+
+1.3.2 البرمجيات
+البرمجيات هي مجموعة من البرامج والتعليمات والبيانات المرتبطة بها التي تخبر الكمبيوتر بما يجب فعله وكيفية تنفيذ عمليات محددة.
+والبرمجيات غير ملموسة ولا يمكن لمسها.
+ويمكن تصنيف البرمجيات بشكل عام إلى:
+1. برمجيات النظام (System Software)
+2. برمجيات التطبيقات (Application Software)
+وسيتم عرض مناقشة تفصيلية للبرمجيات في فصل لاحق.
+
+1.3.3 البيانات
+تشير البيانات إلى الحقائق أو القيم أو الرموز أو الملاحظات الخام التي يمكن للكمبيوتر معالجتها.
+وقد تتخذ البيانات أشكالًا عديدة، منها: الأرقام، النصوص، الأسماء، التواريخ، الصور، الأصوات، القياسات، الرموز.
+
+1.3.4 المستخدمون
+المستخدمون هم الأشخاص الذين يتفاعلون مع أنظمة الكمبيوتر.
+أمثلة: الطلاب، المبرمجون، مسؤولو النظام، وغيرهم من مستخدمي الكمبيوتر.`,
+  explain:`نظام الكمبيوتر = 4 حاجات مع بعض: Hardware + Software + Data + Users.
+الهاردوير هو اللي بنلمسه (شاشة، كيبورد، CPU...). السوفتوير هو اللي مش بنلمسه (برامج وتعليمات) وبينقسم لنوعين: System Software و Application Software.
+البيانات هي المادة الخام، والمستخدمين هم الناس اللي بتتعامل مع النظام.`,
+  terms:[["Hardware","المكونات المادية"],["Software","البرمجيات"],["Data","البيانات"],["Users","المستخدمون"],["System Software","برمجيات النظام"],["Application Software","برمجيات التطبيقات"],["Intangible","غير ملموس"],["Motherboard","اللوحة الأم"]],
+  tips:`احفظ المكونات الأربعة، وتصنيف السوفتوير إلى System و Application. سؤال شائع: "أي مما يلي ليس من المكونات المادية؟" الإجابة عادةً: نظام التشغيل / البرنامج.`
+},
+{
+  title:"1.4 Input Devices",
+  titleAr:"1.4 أجهزة الإدخال",
+  en:`1.4 Input Devices
+
+An input device is a hardware component used to provide data and control signals to a computer system.
+
+Input devices translate information from a form that humans can understand into a form that the computer can process.
+
+Common input devices include:
+1. Keyboard
+2. Mouse
+3. Microphone
+4. Touch screen
+5. Scanner
+6. Webcam
+7. Touchpad
+8. Graphics tablet
+9. Camera
+10. Pen input device
+11. Video capture hardware
+12. Trackball
+13. Barcode reader
+14. Digital camera
+15. Joystick
+16. Gamepad
+17. Electronic whiteboard
+
+Example:
+When a student types a report:
+Keyboard → Computer → Processing
+The keyboard provides the input that the computer receives and processes.`,
+  ar:`1.4 أجهزة الإدخال
+
+جهاز الإدخال هو مكوّن مادي يُستخدم لتقديم البيانات وإشارات التحكم إلى نظام الكمبيوتر.
+
+وتقوم أجهزة الإدخال بترجمة المعلومات من صورة يفهمها الإنسان إلى صورة يستطيع الكمبيوتر معالجتها.
+
+من أجهزة الإدخال الشائعة:
+1. لوحة المفاتيح (Keyboard)
+2. الفأرة (Mouse)
+3. الميكروفون (Microphone)
+4. شاشة اللمس (Touch screen)
+5. الماسح الضوئي (Scanner)
+6. كاميرا الويب (Webcam)
+7. لوحة اللمس (Touchpad)
+8. لوح الرسومات (Graphics tablet)
+9. الكاميرا (Camera)
+10. جهاز الإدخال بالقلم (Pen input device)
+11. جهاز التقاط الفيديو (Video capture hardware)
+12. الكرة الدوّارة (Trackball)
+13. قارئ الباركود (Barcode reader)
+14. الكاميرا الرقمية (Digital camera)
+15. عصا التحكم (Joystick)
+16. يد التحكم (Gamepad)
+17. السبورة الإلكترونية (Electronic whiteboard)
+
+مثال:
+عندما يكتب الطالب تقريرًا:
+لوحة المفاتيح → الكمبيوتر → المعالجة
+فتوفّر لوحة المفاتيح المدخلات التي يستقبلها الكمبيوتر ويعالجها.`,
+  explain:`جهاز الإدخال وظيفته: يدخّل بيانات أو أوامر للكمبيوتر، ويترجمها من صيغة يفهمها الإنسان لصيغة يفهمها الكمبيوتر.
+أمثلة سريعة: كيبورد، ماوس، ميكروفون، سكانر، ويب كام، جويستيك.
+مثال الكتاب: لوحة المفاتيح = Input، ثم الكمبيوتر يعالج.`,
+  terms:[["Input device","جهاز الإدخال"],["Control signals","إشارات التحكم"],["Translate","يترجم / يحوّل"],["Keyboard","لوحة المفاتيح"],["Scanner","الماسح الضوئي"],["Trackball","الكرة الدوّارة"],["Joystick","عصا التحكم"],["Barcode reader","قارئ الباركود"]],
+  tips:`احفظ تعريف جهاز الإدخال + فكرة "الترجمة" (من صيغة الإنسان لصيغة الكمبيوتر). راجع قائمة الأجهزة 17 جهازًا، وانتبه لأجهزة تُستخدم كإدخال وإخراج معًا مثل شاشة اللمس.`
+},
+{
+  title:"1.5 Output Devices",
+  titleAr:"1.5 أجهزة الإخراج",
+  en:`1.5 Output Devices
+
+An output device is a hardware component used to communicate the results of data processing to the user.
+
+Output devices convert electronically generated information into a form that can be understood by people.
+
+Examples include:
+1. Monitor
+2. LCD projection panels
+3. Printers
+4. Computer Output Microfilm (COM)
+5. Plotters
+6. Speakers
+7. Projectors
+
+Example:
+When a computer processes a document and displays it on the screen:
+Processed Data → Monitor → Information Presented to the User`,
+  ar:`1.5 أجهزة الإخراج
+
+جهاز الإخراج هو مكوّن مادي يُستخدم لإيصال نتائج معالجة البيانات إلى المستخدم.
+
+وتقوم أجهزة الإخراج بتحويل المعلومات المولَّدة إلكترونيًا إلى صورة يستطيع الإنسان فهمها.
+
+أمثلة:
+1. الشاشة (Monitor)
+2. لوحات العرض LCD
+3. الطابعات (Printers)
+4. ميكروفيلم مخرجات الكمبيوتر (COM)
+5. الرسّامات البيانية (Plotters)
+6. السماعات (Speakers)
+7. أجهزة العرض (Projectors)
+
+مثال:
+عندما يعالج الكمبيوتر مستندًا ويعرضه على الشاشة:
+بيانات معالجة → الشاشة → معلومات تُعرَض للمستخدم`,
+  explain:`جهاز الإخراج بياخد نتيجة المعالجة ويحوّلها لحاجة المستخدم يفهمها (صورة على الشاشة، ورق مطبوع، صوت).
+أمثلة: مونيتور، طابعة، سماعات، بروجيكتور، بلوتر، COM.`,
+  terms:[["Output device","جهاز الإخراج"],["Monitor","الشاشة"],["Printer","الطابعة"],["Plotter","الرسّام البياني"],["Speakers","السماعات"],["Projector","جهاز العرض"],["COM","ميكروفيلم مخرجات الكمبيوتر"]],
+  tips:`احفظ تعريف جهاز الإخراج والفرق بينه وبين الإدخال. COM و Plotter من الأمثلة التي يسهل نسيانها — احفظها.`
+},
+{
+  title:"1.6 Processing as Input, Processing, and Output",
+  titleAr:"1.6 المعالجة: مدخلات، معالجة، مخرجات",
+  en:`1.6 Processing as Input, Processing, and Output
+
+The basic concept of computer processing can be represented by:
+Input → Processing → Output
+
+The input represents the data provided to a system.
+The processor performs an operation on the input.
+The output is the result produced after processing.
+
+Everyday Examples
+Input | Processor | Output
+Dirty clothes | Washing machine | Clean clothes
+Broken car | Garage / Mechanic | Fixed car
+Raw chicken | Cooking process | Roast chicken
+Person with long hair | Hairdresser | Person with short hair
+
+Computer Examples
+Input | Processor | Output
+Raw data | CPU | Processed information
+Two numbers | ALU | Calculated result
+User command | Computer system | Required action
+Program instructions | CPU | Executed program
+
+The important idea is:
+Processing transforms input into a useful output.`,
+  ar:`1.6 المعالجة: مدخلات، معالجة، مخرجات
+
+يمكن تمثيل المفهوم الأساسي لمعالجة الكمبيوتر على النحو التالي:
+مدخلات → معالجة → مخرجات
+
+فالمدخلات تمثّل البيانات المقدَّمة إلى النظام.
+ويقوم المعالج بإجراء عملية على المدخلات.
+والمخرجات هي النتيجة المنتجة بعد المعالجة.
+
+أمثلة من الحياة اليومية
+المدخلات | المعالج | المخرجات
+ملابس متسخة | غسالة | ملابس نظيفة
+سيارة معطلة | ورشة / ميكانيكي | سيارة مُصلَحة
+دجاج نيء | عملية الطهي | دجاج مشوي
+شخص شعره طويل | حلاق | شخص شعره قصير
+
+أمثلة حاسوبية
+المدخلات | المعالج | المخرجات
+بيانات خام | وحدة المعالجة المركزية (CPU) | معلومات معالَجة
+رقمان | وحدة الحساب والمنطق (ALU) | نتيجة محسوبة
+أمر المستخدم | نظام الكمبيوتر | إجراء مطلوب
+تعليمات البرنامج | وحدة المعالجة المركزية (CPU) | برنامج منفَّذ
+
+الفكرة المهمة هي:
+المعالجة تحوّل المدخلات إلى مخرجات مفيدة.`,
+  explain:`الفكرة بسيطة: أي حاجة في الدنيا ليها Input و Processor و Output.
+مثال: هدوم متسخة → غسالة → هدوم نظيفة.
+وفي الكمبيوتر: بيانات خام → CPU → معلومات معالجة. ورقمين → ALU → نتيجة.
+الخلاصة: المعالجة بتحوّل المدخلات لمخرجات مفيدة.`,
+  terms:[["Processor","المعالج"],["CPU","وحدة المعالجة المركزية"],["ALU","وحدة الحساب والمنطق"],["Raw data","بيانات خام"],["Processed information","معلومات معالَجة"],["Executed program","برنامج منفَّذ"]],
+  tips:`احفظ جدول الأمثلة (اليومية والحاسوبية). سؤال متوقع: "في الجدول، رقمين + ALU = ؟" الإجابة: نتيجة محسوبة. و"تعليمات البرنامج + CPU = ؟" الإجابة: برنامج منفَّذ.`
+},
+{
+  title:"1.7 Data, Information, Knowledge, and Wisdom",
+  titleAr:"1.7 البيانات والمعلومات والمعرفة والحكمة",
+  en:`1.7 Data, Information, Knowledge, and Wisdom
+
+Understanding the difference between data, information, knowledge, and wisdom is fundamental to understanding how computer and information systems transform raw facts into meaningful and useful outcomes. They can be viewed as a progressive process.
+
+1.7.1 Data
+Data refers to raw facts, values, symbols, or observations that have not yet been processed or interpreted.
+Data may include: numbers, text, names, dates, images, sounds, measurements, symbols.
+Example: 85, 72, 91, 64, 88
+These values represent raw data. Without additional context, we do not know what they represent. They could represent: student grades, temperatures, sales figures, examination scores.
+Therefore: Data = Raw facts and observations.
+
+1.7.2 Information
+Information is data that has been processed, organized, structured, or interpreted so that it becomes meaningful and useful.
+Processing data may involve: organizing, classifying, calculating, summarizing, comparing, sorting, presenting relationships or patterns.
+Information can answer questions such as: Who? What? Where? When? How many?
+Example: Suppose the following values represent examination scores: 85, 72, 91, 64, 88. After processing, we may obtain: "The average examination score is 80."
+The original scores are data, while the calculated average represents information.
+Therefore: Information = Processed data with meaning and context.
+
+1.7.3 Knowledge
+Knowledge involves the understanding and application of information.
+It allows a person or system to understand relationships, identify causes, and determine how information can be used to perform an action or solve a problem.
+Knowledge is developed through: experience, learning, analysis, understanding, application of information, recognizing relationships and patterns.
+Knowledge often helps answer the question: How?
+Example: Suppose the information shows: "The average examination score decreased by 10% compared with the previous examination." A teacher may analyze this information and determine: "Students may need additional practice in the topics covered by the examination." This interpretation represents knowledge.
+Therefore: Knowledge = Understanding and applying information.
+
+1.7.4 Wisdom
+Wisdom represents a higher level of understanding that involves evaluating knowledge and using it to make sound decisions or judgments.
+Wisdom involves: evaluation, experience, critical thinking, judgment, decision-making.
+It helps answer the question: Why should we act this way?
+Example: If examination results show a consistent decrease in student performance, and the teacher understands the reasons for the decrease, the teacher may decide to: "Redesign the teaching strategy and provide additional support before the next examination." This decision represents the application of wisdom.
+Therefore: Wisdom = Evaluated understanding used for sound judgment and decision-making.`,
+  ar:`1.7 البيانات والمعلومات والمعرفة والحكمة
+
+فهم الفرق بين البيانات والمعلومات والمعرفة والحكمة أساسي لفهم كيفية تحويل أنظمة الكمبيوتر والمعلومات للحقائق الخام إلى نتائج ذات معنى ومفيدة. ويمكن اعتبارها عملية تدريجية متصاعدة.
+
+1.7.1 البيانات
+تشير البيانات إلى الحقائق أو القيم أو الرموز أو الملاحظات الخام التي لم تُعالَج أو تُفسَّر بعد.
+وقد تشمل البيانات: الأرقام، النصوص، الأسماء، التواريخ، الصور، الأصوات، القياسات، الرموز.
+مثال: 85، 72، 91، 64، 88
+هذه القيم تمثّل بيانات خام. وبدون سياق إضافي لا نعرف ماذا تمثّل؛ فقد تكون: درجات طلاب، أو درجات حرارة، أو أرقام مبيعات، أو درجات امتحانات.
+إذن: البيانات = حقائق وملاحظات خام.
+
+1.7.2 المعلومات
+المعلومات هي بيانات تمت معالجتها أو تنظيمها أو هيكلتها أو تفسيرها حتى تصبح ذات معنى ومفيدة.
+وقد تتضمن معالجة البيانات: التنظيم، التصنيف، الحساب، التلخيص، المقارنة، الترتيب، عرض العلاقات أو الأنماط.
+ويمكن للمعلومات أن تجيب على أسئلة مثل: مَن؟ ماذا؟ أين؟ متى؟ كم العدد؟
+مثال: لنفترض أن القيم التالية تمثّل درجات امتحان: 85، 72، 91، 64، 88. وبعد المعالجة قد نحصل على: "متوسط درجة الامتحان هو 80".
+فالدرجات الأصلية بيانات، أما المتوسط المحسوب فيمثّل معلومات.
+إذن: المعلومات = بيانات معالَجة لها معنى وسياق.
+
+1.7.3 المعرفة
+تتضمن المعرفة فهم المعلومات وتطبيقها.
+وهي تتيح للإنسان أو للنظام فهم العلاقات وتحديد الأسباب وتقرير كيفية استخدام المعلومات لتنفيذ إجراء أو حل مشكلة.
+وتتطور المعرفة من خلال: الخبرة، التعلم، التحليل، الفهم، تطبيق المعلومات، إدراك العلاقات والأنماط.
+وغالبًا تساعد المعرفة على الإجابة على السؤال: كيف؟
+مثال: لنفترض أن المعلومات تُظهر: "انخفض متوسط درجة الامتحان بنسبة 10% مقارنةً بالامتحان السابق". فقد يحلّل المعلم هذه المعلومات ويستنتج: "قد يحتاج الطلاب إلى تدريب إضافي في الموضوعات التي تناولها الامتحان". وهذا التفسير يمثّل معرفة.
+إذن: المعرفة = فهم المعلومات وتطبيقها.
+
+1.7.4 الحكمة
+تمثّل الحكمة مستوى أعلى من الفهم يتضمن تقييم المعرفة واستخدامها لاتخاذ قرارات أو أحكام سليمة.
+وتتضمن الحكمة: التقييم، الخبرة، التفكير النقدي، الحكم، اتخاذ القرار.
+وتساعد على الإجابة على السؤال: لماذا يجب أن نتصرّف بهذه الطريقة؟
+مثال: إذا أظهرت نتائج الامتحانات انخفاضًا مستمرًا في أداء الطلاب، وفهم المعلم أسباب هذا الانخفاض، فقد يقرر: "إعادة تصميم استراتيجية التدريس وتقديم دعم إضافي قبل الامتحان التالي". وهذا القرار يمثّل تطبيقًا للحكمة.
+إذن: الحكمة = فهم مُقيَّم يُستخدم لإصدار حكم سليم واتخاذ قرار.`,
+  explain:`الفكرة كلها سلم بنطلع عليه:
+• Data: أرقام خام من غير معنى (85، 72، 91...).
+• Information: بعد المعالجة بقى ليها معنى ("المتوسط 80") — بتجاوب على مَن/ماذا/أين/متى/كم.
+• Knowledge: فهمت ليه وربطت الأسباب ("المتوسط قلّ 10%، الطلاب محتاجين تدريب") — بتجاوب على "كيف؟".
+• Wisdom: قررت قرار صح ("هغيّر استراتيجية التدريس") — بتجاوب على "لماذا نتصرف هكذا؟".
+كل ما تطلع درجة، بتضيف حاجة: Context ثم Meaning ثم Insight.`,
+  terms:[["Data","البيانات"],["Information","المعلومات"],["Knowledge","المعرفة"],["Wisdom","الحكمة"],["Raw facts","حقائق خام"],["Context","السياق"],["Interpretation","التفسير"],["Judgment","الحكم"],["Decision-making","اتخاذ القرار"]],
+  tips:`احفظ ترتيب السلم: Data → Information → Knowledge → Wisdom.
+واحفظ السؤال المميّز لكل مستوى: Information (كم؟ مَن؟) — Knowledge (كيف؟) — Wisdom (لماذا؟).
+مثال الدرجات: 85,72,91,64,88 = Data، والمتوسط 80 = Information.`
+},
+{
+  title:"1.7.5 Example: University Attendance System",
+  titleAr:"1.7.5 مثال: نظام حضور الجامعة",
+  en:`1.7.5 Simple Example: University Attendance System
+
+Consider a university attendance system.
+
+Data:
+Student A: 8
+Student B: 12
+Student C: 5
+These are attendance records.
+
+Information:
+Student A attended 8 out of 12 classes, while Student C attended only 5 out of 12.
+The data has been organized and given context.
+
+Knowledge:
+Student C has a low attendance rate and may be at greater risk of missing important course content.
+The information has been interpreted.
+
+Wisdom:
+The academic advisor decides to contact Student C and provide appropriate academic support.
+The knowledge has been used to make a decision.`,
+  ar:`1.7.5 مثال بسيط: نظام حضور الجامعة
+
+لنأخذ نظام حضور جامعيًا كمثال.
+
+البيانات:
+الطالب أ: 8
+الطالب ب: 12
+الطالب ج: 5
+هذه سجلات حضور.
+
+المعلومات:
+حضر الطالب أ 8 محاضرات من 12، بينما حضر الطالب ج 5 فقط من 12.
+لقد تم تنظيم البيانات وإعطاؤها سياقًا.
+
+المعرفة:
+لدى الطالب ج نسبة حضور منخفضة، وقد يكون أكثر عرضة لتفويت محتوى مهم من المقرر.
+لقد تم تفسير المعلومات.
+
+الحكمة:
+يقرر المرشد الأكاديمي التواصل مع الطالب ج وتقديم دعم أكاديمي مناسب.
+لقد تم استخدام المعرفة لاتخاذ قرار.`,
+  explain:`نفس السلم بس بمثال عملي:
+• البيانات: مجرد أرقام (8، 12، 5).
+• المعلومات: "الطالب أ حضر 8 من 12، والطالب ج حضر 5 فقط" — رتّبنا الأرقام ووضعناها في سياق.
+• المعرفة: "الطالب ج نسبة حضوره ضعيفة وممكن يفوّت محتوى مهم" — فسّرنا.
+• الحكمة: "المرشد الأكاديمي يقرر يتواصل مع الطالب ج ويدعمه" — استخدمنا المعرفة لاتخاذ قرار.
+مهم جدًا في الامتحان: كل جملة من الأربعة منسوبة لمستواها الصح.`,
+  terms:[["Attendance","الحضور"],["Academic advisor","المرشد الأكاديمي"],["Attendance rate","نسبة الحضور"],["Academic support","الدعم الأكاديمي"]],
+  tips:`هذا المثال هو أكثر مثال متوقع في الامتحان. احفظ: الأرقام = Data، الجملة المنظّمة = Information، التفسير = Knowledge، القرار = Wisdom.`
+},
+{
+  title:"1.8 Classification of Computers — PC, Workstation, Minicomputer",
+  titleAr:"1.8 تصنيف الكمبيوترات — الحاسب الشخصي ومحطة العمل والحاسب المتوسط",
+  en:`1.8 Classification of Computers
+
+Computers can be classified according to several characteristics, including:
+• Processing power
+• Size
+• Number of users
+• Intended use
+• Performance
+
+Traditional classifications include:
+1. Personal Computers
+2. Workstations
+3. Minicomputers
+4. Mainframe Computers
+5. Supercomputers
+
+Modern computer systems do not always fit neatly into only one category.
+
+1.8.1 Personal Computer (PC)
+A Personal Computer (PC) is a computer designed primarily for use by one person at a time.
+Examples include: desktop computers, laptop computers.
+A typical personal computer may include:
+• CPU for processing instructions
+• Keyboard and mouse for input
+• Monitor for displaying information
+• RAM for temporary storage
+• SSD or HDD for long-term storage
+Common applications include: [the list of common applications is not included in the provided pages]
+
+1.8.2 Workstation
+A workstation is a powerful computer designed primarily for one user and intended for demanding professional or technical tasks.
+Compared with a typical personal computer, a workstation may provide:
+• A more powerful processor
+• Larger memory capacity
+• Higher-performance graphics processing
+• High-quality display capabilities
+• Greater reliability for professional workloads
+Common applications include:
+• Computer-Aided Design (CAD)
+• 3D modeling and animation
+• Scientific and engineering applications
+• Data analysis
+• Software development
+• Artificial intelligence and machine learning workloads
+
+1.8.3 Minicomputer
+A minicomputer is a traditional term used to describe a mid-range computer system that could support multiple users simultaneously.
+Historically, minicomputers were more powerful than typical personal computers but less powerful and less expensive than mainframe computers.
+They were commonly used for:
+• Business applications
+• Scientific applications
+• Industrial control
+• Database processing
+Note: The term minicomputer is now largely considered historical. Modern servers and other multi-user systems have replaced many of the functions traditionally associated with minicomputers.`,
+  ar:`1.8 تصنيف الكمبيوترات
+
+يمكن تصنيف الكمبيوترات وفقًا لعدة خصائص، منها:
+• قوة المعالجة
+• الحجم
+• عدد المستخدمين
+• الغرض من الاستخدام
+• الأداء
+
+وتشمل التصنيفات التقليدية:
+1. الحاسبات الشخصية (Personal Computers)
+2. محطات العمل (Workstations)
+3. الحاسبات المتوسطة (Minicomputers)
+4. الحاسبات المركزية (Mainframe Computers)
+5. الحاسبات العظمى (Supercomputers)
+
+لكن أنظمة الكمبيوتر الحديثة لا تندرج دائمًا بشكل دقيق في فئة واحدة فقط.
+
+1.8.1 الحاسب الشخصي (PC)
+الحاسب الشخصي هو كمبيوتر مُصمَّم أساسًا لاستخدام شخص واحد في الوقت نفسه.
+أمثلة: الحاسبات المكتبية (Desktop)، والحاسبات المحمولة (Laptop).
+وقد يشمل الحاسب الشخصي النموذجي:
+• وحدة معالجة مركزية (CPU) لمعالجة التعليمات
+• لوحة مفاتيح وفأرة للإدخال
+• شاشة لعرض المعلومات
+• ذاكرة RAM للتخزين المؤقت
+• قرص SSD أو HDD للتخزين طويل المدى
+التطبيقات الشائعة: [قائمة التطبيقات الشائعة غير موجودة في الصفحات المتوفرة]
+
+1.8.2 محطة العمل (Workstation)
+محطة العمل هي كمبيوتر قوي مُصمَّم أساسًا لمستخدم واحد ومخصَّص للمهام المهنية أو التقنية المتطلبة.
+وبالمقارنة مع حاسب شخصي نموذجي، قد توفّر محطة العمل:
+• معالجًا أقوى
+• سعة ذاكرة أكبر
+• معالجة رسومات أعلى أداءً
+• قدرات عرض عالية الجودة
+• موثوقية أكبر لأحمال العمل المهنية
+ومن تطبيقاتها الشائعة:
+• التصميم بمساعدة الكمبيوتر (CAD)
+• النمذجة والرسوم المتحركة ثلاثية الأبعاد
+• التطبيقات العلمية والهندسية
+• تحليل البيانات
+• تطوير البرمجيات
+• أحمال الذكاء الاصطناعي وتعلّم الآلة
+
+1.8.3 الحاسب المتوسط (Minicomputer)
+الحاسب المتوسط مصطلح تقليدي يُستخدم لوصف نظام كمبيوتر متوسط المدى يمكنه دعم عدة مستخدمين في الوقت نفسه.
+وتاريخيًا، كانت الحاسبات المتوسطة أقوى من الحاسبات الشخصية النموذجية، لكنها أقل قوة وأقل تكلفة من الحاسبات المركزية.
+وكانت تُستخدم عادةً في:
+• تطبيقات الأعمال
+• التطبيقات العلمية
+• التحكم الصناعي
+• معالجة قواعد البيانات
+ملاحظة: يُعتبر مصطلح "الحاسب المتوسط" الآن تاريخيًا إلى حد كبير. فقد حلّت الخوادم الحديثة وغيرها من الأنظمة متعددة المستخدمين محل كثير من الوظائف المرتبطة تقليديًا بالحاسبات المتوسطة.`,
+  explain:`التصنيف التقليدي خمسة أنواع: PC، Workstation، Minicomputer، Mainframe، Supercomputer.
+• الـ PC: لشخص واحد في نفس الوقت (ديسكتوب/لابتوب)، وفيه CPU + كيبورد وماوس + شاشة + RAM (مؤقت) + SSD/HDD (طويل المدى).
+• الـ Workstation: قوي جدًا لمستخدم واحد لكن لشغل تقيل (CAD، 3D، ذكاء اصطناعي)، وبيمتاز بمعالج أقوى وذاكرة أكبر وجرافيكس أعلى.
+• الـ Minicomputer: كان بين الـ PC والـ Mainframe، ويخدم كذا مستخدم في نفس الوقت، ومصطلحه بقى تاريخي.`,
+  terms:[["Processing power","قوة المعالجة"],["Personal Computer (PC)","الحاسب الشخصي"],["Workstation","محطة العمل"],["Minicomputer","الحاسب المتوسط"],["RAM","ذاكرة الوصول العشوائي"],["SSD / HDD","أقراص التخزين"],["CAD","التصميم بمساعدة الكمبيوتر"],["Multi-user","متعدد المستخدمين"]],
+  tips:`احفظ الخصائص الخمسة للتصنيف، والأنواع الخمسة بالترتيب.
+قارن: PC (شخص واحد، مهام عادية) / Workstation (شخص واحد، مهام احترافية) / Minicomputer (عدة مستخدمين، مصطلح تاريخي).`
+},
+{
+  title:"1.8.4 Mainframe & 1.8.5 Supercomputer",
+  titleAr:"1.8.4 الحاسب المركزي و1.8.5 الحاسب العظيم",
+  en:`1.8.4 Mainframe Computer
+
+A mainframe computer is a powerful computer system designed to process very large amounts of data and transactions and support many users and applications simultaneously.
+
+Mainframes are particularly important in organizations that require:
+• High reliability
+• Large-scale data processing
+• High transaction-processing capacity
+• Continuous operation
+• Strong security and access control
+
+Common applications include:
+• Banking and financial transactions
+• Government systems
+
+1.8.5 Supercomputer
+
+A supercomputer is a computer system designed to provide extremely high computational performance.
+
+Supercomputers are built to solve complex computational problems by performing enormous numbers of calculations, often using many processors working in parallel.
+
+Common applications include:
+• Weather and climate modeling
+• Scientific research
+• Physics simulations
+• Molecular and drug research
+• Space research
+• Computational fluid dynamics
+• Large-scale artificial intelligence and scientific computing`,
+  ar:`1.8.4 الحاسب المركزي (Mainframe)
+
+الحاسب المركزي هو نظام كمبيوتر قوي مُصمَّم لمعالجة كميات ضخمة جدًا من البيانات والمعاملات، ودعم العديد من المستخدمين والتطبيقات في الوقت نفسه.
+
+وتُعدّ الحاسبات المركزية مهمة بشكل خاص في المؤسسات التي تحتاج إلى:
+• موثوقية عالية
+• معالجة بيانات على نطاق واسع
+• قدرة عالية على معالجة المعاملات
+• تشغيل مستمر
+• أمان قوي وتحكم في الوصول
+
+ومن تطبيقاتها الشائعة:
+• المعاملات المصرفية والمالية
+• الأنظمة الحكومية
+
+1.8.5 الحاسب العظيم (Supercomputer)
+
+الحاسب العظيم هو نظام كمبيوتر مُصمَّم لتقديم أداء حوسبي فائق.
+
+وتُبنى الحاسبات العظمى لحل مشكلات حوسبية معقدة عبر تنفيذ أعداد هائلة من العمليات الحسابية، وغالبًا باستخدام العديد من المعالجات التي تعمل بالتوازي.
+
+ومن تطبيقاتها الشائعة:
+• نمذجة الطقس والمناخ
+• البحث العلمي
+• محاكاة الفيزياء
+• أبحاث الجزيئات والأدوية
+• أبحاث الفضاء
+• ديناميكا السوائل الحسابية
+• الذكاء الاصطناعي والحوسبة العلمية على نطاق واسع`,
+  explain:`• Mainframe: مش جهاز لشخص واحد، ده نظام ضخم بيخدم آلاف المستخدمين والتطبيقات في نفس الوقت، وأهم حاجة فيه: الموثوقية العالية والتشغيل المستمر والأمان. استخدامه الأساسي: البنوك والمعاملات المالية والأنظمة الحكومية.
+• Supercomputer: مش للخدمة الجماهيرية، ده للأداء الحسابي الفائق وحل مشاكل معقدة بمعالجات كتير شغالة بالتوازي (Parallel). استخدامه: الطقس، الفيزياء، الأدوية، الفضاء، الذكاء الاصطناعي.`,
+  terms:[["Mainframe","الحاسب المركزي"],["Supercomputer","الحاسب العظيم"],["Transaction","معاملة"],["Reliability","الموثوقية"],["Parallel processing","المعالجة المتوازية"],["Simulation","المحاكاة"],["Modeling","النمذجة"]],
+  tips:`ركّز على الفرق: Mainframe = معاملات ضخمة + مستخدمون كثر + تشغيل مستمر. Supercomputer = حسابات فائقة + معالجات متوازية + أبحاث علمية.
+احفظ أمثلة كل نوع.`
+},
+{
+  title:"1.9 Characteristics of Computers",
+  titleAr:"1.9 خصائص الكمبيوتر",
+  en:`1.9 Characteristics of Computers
+
+Computers have several important characteristics that distinguish them from many other information-processing tools.
+
+The figure lists eight core characteristics:
+1. Speed
+2. Accuracy
+3. Diligence
+4. Versatility
+5. Storage Capacity
+6. Automation
+7. Reliability
+8. Multitasking
+
+1.9.1 Speed
+Computers can process data very quickly. Tasks that might take humans a long time can be completed by computers in a short period.
+
+1.9.2 Accuracy
+Computers can provide a high degree of accuracy when the data and instructions supplied to them are correct.
+
+1.9.3 Diligence
+A computer does not become tired or fatigued when performing repetitive operations. It can perform long and complex calculations with consistent speed and accuracy.
+
+1.9.4 Storage Capability
+Computers can store large volumes of data and information and retrieve them when required.
+
+1.9.5 Versatility
+A computer can perform different types of tasks. For example, the same computer can be used to prepare a document, play music, browse the web, or perform calculations.
+
+From the characteristics figure:
+6. Automation — Once a program is given, computers can automatically execute the instructions. This reduces the need for human intervention.
+7. Reliability — Computers are reliable and dependable. They can repeat tasks with the same accuracy and give consistent results.
+8. Multitasking — Computers can perform many tasks at the same time and switch quickly from one task to another.`,
+  ar:`1.9 خصائص الكمبيوتر
+
+يتميّز الكمبيوتر بعدة خصائص مهمة تجعله مختلفًا عن كثير من أدوات معالجة المعلومات الأخرى.
+
+يوضّح الشكل ثماني خصائص أساسية:
+1. السرعة (Speed)
+2. الدقة (Accuracy)
+3. المثابرة (Diligence)
+4. تعدد الاستخدامات (Versatility)
+5. سعة التخزين (Storage Capacity)
+6. الأتمتة (Automation)
+7. الموثوقية (Reliability)
+8. تعدد المهام (Multitasking)
+
+1.9.1 السرعة
+يستطيع الكمبيوتر معالجة البيانات بسرعة كبيرة. فالمهام التي قد تستغرق من الإنسان وقتًا طويلًا يمكن للكمبيوتر إنجازها في فترة قصيرة.
+
+1.9.2 الدقة
+يوفّر الكمبيوتر درجة عالية من الدقة عندما تكون البيانات والتعليمات المقدَّمة إليه صحيحة.
+
+1.9.3 المثابرة
+لا يشعر الكمبيوتر بالتعب أو الإجهاد عند تنفيذ العمليات المتكررة. ويمكنه إجراء حسابات طويلة ومعقدة بسرعة ودقة ثابتتين.
+
+1.9.4 سعة التخزين
+يستطيع الكمبيوتر تخزين كميات كبيرة من البيانات والمعلومات واسترجاعها عند الحاجة.
+
+1.9.5 تعدد الاستخدامات
+يستطيع الكمبيوتر أداء أنواع مختلفة من المهام. فمثلًا يمكن استخدام الكمبيوتر نفسه لإعداد مستند، أو تشغيل الموسيقى، أو تصفح الويب، أو إجراء حسابات.
+
+ومن الشكل الخاص بالخصائص:
+6. الأتمتة — بمجرد إعطاء برنامج، يستطيع الكمبيوتر تنفيذ التعليمات تلقائيًا، مما يقلل الحاجة إلى التدخل البشري.
+7. الموثوقية — الكمبيوتر موثوق ويُعتمد عليه، ويمكنه تكرار المهام بنفس الدقة وإعطاء نتائج ثابتة.
+8. تعدد المهام — يستطيع الكمبيوتر أداء مهام كثيرة في الوقت نفسه والانتقال بسرعة من مهمة إلى أخرى.`,
+  explain:`ثماني خصائص، ولكل واحدة كلمة مفتاحية:
+• Speed = سرعة عالية جدًا.
+• Accuracy = دقة عالية، لكن بشرط صحة البيانات والتعليمات (Garbage In, Garbage Out).
+• Diligence = مش بيتعب ومش بيزهق من التكرار.
+• Versatility = بيعمل حاجات مختلفة (مستند، موسيقى، ويب، حسابات).
+• Storage = يخزّن كميات ضخمة ويسترجعها.
+• Automation = ينفّذ البرنامج تلقائيًا من غير تدخل بشري.
+• Reliability = نتائج ثابتة وموثوقة عند التكرار.
+• Multitasking = مهام كتير في نفس الوقت.
+ملاحظة: النص المكتوب ذكر 5 خصائص فقط، والصورة أضافت 3 (Automation, Reliability, Multitasking).`,
+  terms:[["Speed","السرعة"],["Accuracy","الدقة"],["Diligence","المثابرة"],["Versatility","تعدد الاستخدامات"],["Storage Capacity","سعة التخزين"],["Automation","الأتمتة"],["Reliability","الموثوقية"],["Multitasking","تعدد المهام"]],
+  tips:`احفظ الثمانية بالترتيب، وميّز بين المتشابهات: Diligence (لا يتعب) ≠ Reliability (نتائج ثابتة)، و Versatility (مهام مختلفة) ≠ Multitasking (مهام في نفس الوقت).`
+},
+{
+  title:"1.10 Limitations of Computers",
+  titleAr:"1.10 حدود الكمبيوتر",
+  en:`1.10 Limitations of Computers
+
+Despite their capabilities, computers have limitations.
+
+A computer can only perform tasks according to the instructions provided to it.
+
+A computer does not perform useful work without appropriate instructions or programs.
+
+Therefore, the computer's results depend on:
+• The instructions provided.
+• The data supplied.
+• The software used.
+• The way the system is designed and operated.`,
+  ar:`1.10 حدود الكمبيوتر
+
+على الرغم من قدراتها، فإن للكمبيوتر حدودًا.
+
+فالكمبيوتر لا يستطيع أداء المهام إلا وفقًا للتعليمات المقدَّمة إليه.
+
+ولا يقوم الكمبيوتر بعمل مفيد دون تعليمات أو برامج مناسبة.
+
+ولذلك تعتمد نتائج الكمبيوتر على:
+• التعليمات المقدَّمة.
+• البيانات المزوَّدة به.
+• البرمجيات المستخدمة.
+• طريقة تصميم النظام وتشغيله.`,
+  explain:`مهم جدًا: الكمبيوتر "آلة" — مش بيفكر لوحده. هو بينفّذ التعليمات اللي بتديها له بس.
+ولو مدخلتلوش برنامج مناسب، مش هيعمل حاجة مفيدة.
+ونتيجة شغله بتعتمد على 4 حاجات: التعليمات + البيانات + البرمجيات + طريقة تصميم وتشغيل النظام.`,
+  terms:[["Limitations","الحدود / القيود"],["Appropriate instructions","تعليمات مناسبة"],["Software","البرمجيات"],["Designed and operated","مُصمَّم ومُشغَّل"]],
+  tips:`احفظ الأربعة التي تعتمد عليها نتائج الكمبيوتر. وسؤال شائع: "الكمبيوتر لا يؤدي عملًا مفيدًا بدون ..." الإجابة: تعليمات أو برامج مناسبة.`
+}
+];
+
+/* =========================================================
+   3. FLASHCARDS — 20 ESSAY QUESTIONS (SHORT ANSWERS)
+   ========================================================= */
+const FLASHCARDS = [
+{q:`Define a computer and list the four basic operations it performs.`,
+ qAr:`عرّف الكمبيوتر واذكر العمليات الأربع الأساسية التي يقوم بها.`,
+ a:`A computer is an electronic system that accepts data as input, processes it by instructions, produces information as output, and stores it. Basic operation: Input → Processing → Output → Storage.`,
+ aAr:`الكمبيوتر نظام إلكتروني يستقبل البيانات كمدخلات، ويعالجها وفق التعليمات، وينتج المعلومات كمخرجات، ويخزّنها. العملية الأساسية: مدخلات ← معالجة ← مخرجات ← تخزين.`},
+
+{q:`What is a computer system? Name its four main components and explain how they work together.`,
+ qAr:`ما هو نظام الكمبيوتر؟ اذكر مكوناته الأربعة الرئيسية واشرح كيف تعمل معًا.`,
+ a:`A computer system = hardware + software + data + users working together. Hardware provides physical resources, software gives instructions, data is raw material, users interact.`,
+ aAr:`نظام الكمبيوتر = المكونات المادية + البرمجيات + البيانات + المستخدمون يعملون معًا. الهاردوير يوفر الموارد، والسوفتوير يقدم التعليمات، والبيانات مادة خام، والمستخدمون يتفاعلون.`},
+
+{q:`List the five major functions of a computer and define each briefly.`,
+ qAr:`اذكر الوظائف الخمس الرئيسية للكمبيوتر وعرّف كل واحدة بإيجاز.`,
+ a:`1 Input: entering data/instructions. 2 Processing: CPU executes instructions. 3 Output: results to user. 4 Storage: saving data. 5 Control: coordinating components by program instructions.`,
+ aAr:`1 الإدخال: إدخال البيانات والتعليمات. 2 المعالجة: المعالج ينفّذ التعليمات. 3 الإخراج: النتائج للمستخدم. 4 التخزين: حفظ البيانات. 5 التحكم: تنسيق المكونات وفق تعليمات البرنامج.`},
+
+{q:`Differentiate hardware from software, and classify software into its two broad types.`,
+ qAr:`فرّق بين المكونات المادية والبرمجيات، وصنّف البرمجيات إلى نوعيها الرئيسيين.`,
+ a:`Hardware: physical, touchable parts. Software: intangible programs/instructions. Types: System Software and Application Software.`,
+ aAr:`الهاردوير: أجزاء فيزيائية ملموسة. السوفتوير: برامج وتعليمات غير ملموسة. وأنواعه: برمجيات النظام وبرمجيات التطبيقات.`},
+
+{q:`Define data and list six forms that data may take.`,
+ qAr:`عرّف البيانات واذكر ستة أشكال قد تتخذها.`,
+ a:`Data: raw facts/values/symbols/observations. Forms: numbers, text, names, dates, images, sounds, measurements, symbols.`,
+ aAr:`البيانات: حقائق/قيم/رموز/ملاحظات خام. أشكالها: الأرقام، النصوص، الأسماء، التواريخ، الصور، الأصوات، القياسات، الرموز.`},
+
+{q:`What is an input device? Give at least five examples and explain what input devices do to information.`,
+ qAr:`ما هو جهاز الإدخال؟ اذكر خمسة أمثلة على الأقل واشرح ما تفعله أجهزة الإدخال بالمعلومات.`,
+ a:`Input device provides data/control signals and translates human info to computer form. Examples: keyboard, mouse, microphone, scanner, webcam, joystick.`,
+ aAr:`جهاز الإدخال يقدّم البيانات وإشارات التحكم ويترجم معلومات الإنسان لصيغة الكمبيوتر. أمثلة: لوحة المفاتيح، الفأرة، الميكروفون، الماسح، كاميرا الويب، عصا التحكم.`},
+
+{q:`What is an output device? Give five examples.`,
+ qAr:`ما هو جهاز الإخراج؟ اذكر خمسة أمثلة.`,
+ a:`Output device communicates processing results to user in human form. Examples: monitor, printer, plotter, speakers, projector, COM.`,
+ aAr:`جهاز الإخراج يوصل نتائج المعالجة للمستخدم بصيغة يفهمها الإنسان. أمثلة: الشاشة، الطابعة، الرسّام البياني، السماعات، جهاز العرض، COM.`},
+
+{q:`Explain the Input → Processing → Output model and give one everyday example and one computer example.`,
+ qAr:`اشرح نموذج مدخلات ← معالجة ← مخرجات مع ذكر مثال يومي ومثال حاسوبي.`,
+ a:`Input: data to system; Processing: operation on input; Output: result. Example: dirty clothes → washing machine → clean clothes; raw data → CPU → info.`,
+ aAr:`المدخلات: بيانات للنظام؛ المعالجة: عملية عليها؛ المخرجات: النتيجة. مثال: ملابس متسخة ← غسالة ← نظيفة؛ بيانات خام ← CPU ← معلومات.`},
+
+{q:`In the processing model, what is the role of the CPU and what is the role of the ALU?`,
+ qAr:`في نموذج المعالجة، ما دور وحدة المعالجة المركزية (CPU) وما دور وحدة الحساب والمنطق (ALU)؟`,
+ a:`CPU processes raw data into info and executes instructions. ALU performs arithmetic/logic: two numbers → ALU → calculated result.`,
+ aAr:`CPU تحوّل البيانات الخام لمعلومات وتنفّذ التعليمات. ALU تُجري العمليات الحسابية/المنطقية: رقمان ← ALU ← نتيجة محسوبة.`},
+
+{q:`Distinguish between data and information, using the examination-score example.`,
+ qAr:`فرّق بين البيانات والمعلومات باستخدام مثال درجات الامتحان.`,
+ a:`Data = raw facts without context (85,72,91,64,88). Information = processed data with meaning/context (average = 80).`,
+ aAr:`البيانات = حقائق خام بلا سياق (85، 72، 91، 64، 88). المعلومات = بيانات معالَجة لها معنى وسياق (المتوسط = 80).`},
+
+{q:`Define knowledge, explain how it is developed, and state the question it helps answer.`,
+ qAr:`عرّف المعرفة، واشرح كيف تتطور، واذكر السؤال الذي تساعد على الإجابة عليه.`,
+ a:`Knowledge = understanding/applying info to identify relationships/causes/actions. Develops by experience, learning, analysis. Answers: How?`,
+ aAr:`المعرفة = فهم وتطبيق المعلومات لتحديد العلاقات والأسباب والإجراءات. تتطور بالخبرة والتعلم والتحليل. تجيب على: كيف؟`},
+
+{q:`Define wisdom, explain how it differs from knowledge, and state the question it answers.`,
+ qAr:`عرّف الحكمة، واشرح كيف تختلف عن المعرفة، واذكر السؤال الذي تجيب عنه.`,
+ a:`Wisdom = evaluated knowledge used for sound judgment/decisions, adding critical thinking. Knowledge understands/applies info; wisdom evaluates it. Answers: Why?`,
+ aAr:`الحكمة = معرفة مُقيَّمة تُستخدم لأحكام وقرارات سليمة، وتضيف التفكير النقدي. المعرفة تفهم وتطبق، والحكمة تُقيّم. تجيب على: لماذا؟`},
+
+{q:`Apply the data → information → knowledge → wisdom hierarchy to the university attendance system.`,
+ qAr:`طبّق سلسلة البيانات ← المعلومات ← المعرفة ← الحكمة على نظام حضور الجامعة.`,
+ a:`Data: A=8, B=12, C=5. Information: A attended 8/12, C only 5/12. Knowledge: C risks missing content. Wisdom: advisor contacts C.`,
+ aAr:`بيانات: أ=8، ب=12، ج=5. معلومات: أ حضر 8/12، ج حضر 5/12 فقط. معرفة: ج قد يفوّت محتوى. حكمة: المرشد يتواصل مع ج.`},
+
+{q:`On what characteristics can computers be classified? List the five traditional classifications.`,
+ qAr:`وفق أي خصائص يمكن تصنيف الكمبيوترات؟ واذكر التصنيفات التقليدية الخمسة.`,
+ a:`By processing power, size, users, use, performance. Types: PC, Workstation, Minicomputer, Mainframe, Supercomputer.`,
+ aAr:`وفق قوة المعالجة والحجم وعدد المستخدمين والغرض والأداء. الأنواع: حاسب شخصي، محطة عمل، حاسب متوسط، حاسب مركزي، حاسب عظيم.`},
+
+{q:`Describe a personal computer and the components a typical PC may include.`,
+ qAr:`اوصف الحاسب الشخصي والمكونات التي قد يشملها الحاسب النموذجي.`,
+ a:`PC = one person at a time (desktop/laptop). Parts: CPU, keyboard/mouse, monitor, RAM (temp), SSD/HDD (long-term).`,
+ aAr:`الحاسب الشخصي = شخص واحد في الوقت نفسه (مكتبي/محمول). مكوناته: CPU، لوحة مفاتيح وفأرة، شاشة، RAM (مؤقتة)، SSD/HDD (طويل المدى).`},
+
+{q:`What is a workstation? How does it differ from a typical PC and what are its common applications?`,
+ qAr:`ما هي محطة العمل؟ وكيف تختلف عن الحاسب الشخصي النموذجي وما تطبيقاتها الشائعة؟`,
+ a:`Workstation = powerful single-user computer for professional tasks. Vs PC: stronger CPU, more memory, better graphics. Apps: CAD, 3D, AI/ML.`,
+ aAr:`محطة العمل = كمبيوتر قوي لمستخدم واحد لمهام مهنية. تختلف عن PC بمعالج أقوى وذاكرة أكبر ورسومات أفضل. تطبيقاتها: CAD، ثلاثي الأبعاد، ذكاء اصطناعي.`},
+
+{q:`What is a minicomputer? Why is the term now largely considered historical?`,
+ qAr:`ما هو الحاسب المتوسط؟ ولماذا يُعتبر المصطلح الآن تاريخيًا إلى حد كبير؟`,
+ a:`Minicomputer = mid-range multi-user system, between PC and mainframe. Term now historical; modern servers replaced it.`,
+ aAr:`الحاسب المتوسط = نظام متوسط المدى متعدد المستخدمين، بين PC وMainframe. مصطلحه تاريخي الآن؛ الخوادم الحديثة حلّت محله.`},
+
+{q:`Compare mainframe computers and supercomputers in terms of purpose and applications.`,
+ qAr:`قارن بين الحاسبات المركزية والحاسبات العظمى من حيث الغرض والتطبيقات.`,
+ a:`Mainframe: huge transactions, many users, reliability. Apps: banking, government. Supercomputer: extreme performance via parallel processors. Apps: weather, physics, AI.`,
+ aAr:`Mainframe: معاملات ضخمة وكثير من المستخدمين وموثوقية. تطبيقاته: البنوك والحكومة. Supercomputer: أداء فائق بمعالجات متوازية. تطبيقاته: الطقس، الفيزياء، الذكاء الاصطناعي.`},
+
+{q:`List and explain the characteristics of computers (at least six).`,
+ qAr:`اذكر واشرح خصائص الكمبيوتر (ستة على الأقل).`,
+ a:`Speed (fast), Accuracy (correct data), Diligence (no fatigue), Storage (large), Versatility (many tasks), Automation (auto execution), Reliability (consistent), Multitasking (parallel tasks).`,
+ aAr:`السرعة (سريع)، الدقة (بيانات صحيحة)، المثابرة (لا يتعب)، التخزين (سعة كبيرة)، تعدد الاستخدامات (مهام متنوعة)، الأتمتة (تنفيذ تلقائي)، الموثوقية (نتائج ثابتة)، تعدد المهام (مهام متوازية).`},
+
+{q:`What are the limitations of computers, and on what do their results depend?`,
+ qAr:`ما حدود الكمبيوتر؟ وعلى ماذا تعتمد نتائجه؟`,
+ a:`Computers follow only given instructions and need programs for useful work. Results depend on instructions, data, software, and system design/operation.`,
+ aAr:`الكمبيوتر ينفّذ التعليمات المعطاة فقط ويحتاج برامج لعمل مفيد. نتائجه تعتمد على التعليمات والبيانات والبرمجيات وتصميم النظام وتشغيله.`}
+];
+
+/* =========================================================
+   4. SUMMARY — 20 KEY POINTS
+   ========================================================= */
+const SUMMARY = [
+{en:`A computer is an electronic system that accepts data as input, processes it according to instructions, produces information as output, and stores data and information for future use.`,
+ ar:`الكمبيوتر نظام إلكتروني يستقبل البيانات كمدخلات، ويعالجها وفق التعليمات، وينتج المعلومات كمخرجات، ويخزّن البيانات والمعلومات للاستخدام المستقبلي.`},
+{en:`The basic operation of a computer is: Input → Processing → Output → Storage.`,
+ ar:`العملية الأساسية للكمبيوتر هي: مدخلات ← معالجة ← مخرجات ← تخزين.`},
+{en:`A computer has five major functions: Input, Processing, Output, Storage, and Control.`,
+ ar:`لل كمبيوتر خمس وظائف رئيسية: الإدخال، المعالجة، الإخراج، التخزين، والتحكم.`},
+{en:`Control coordinates all component operations according to the instructions provided by programs.`,
+ ar:`التحكم ينسّق جميع عمليات المكونات وفق التعليمات التي تقدّمها البرامج.`},
+{en:`A computer system consists of four main components: Hardware, Software, Data, and Users.`,
+ ar:`يتكوّن نظام الكمبيوتر من أربعة مكونات رئيسية: المكونات المادية، البرمجيات، البيانات، والمستخدمون.`},
+{en:`Hardware is the physical part that can be seen and touched (monitor, keyboard, CPU, memory, motherboard, storage devices, graphics and sound cards).`,
+ ar:`المكونات المادية هي الجزء الفيزيائي الذي يمكن رؤيته ولمسه (الشاشة، لوحة المفاتيح، المعالج، الذاكرة، اللوحة الأم، أجهزة التخزين، كروت الرسومات والصوت).`},
+{en:`Software is intangible; it is a collection of programs and instructions, classified into System Software and Application Software.`,
+ ar:`البرمجيات غير ملموسة، وهي مجموعة من البرامج والتعليمات، وتُصنَّف إلى برمجيات النظام وبرمجيات التطبيقات.`},
+{en:`Data forms include numbers, text, names, dates, images, sounds, measurements, and symbols; users are the people who interact with the system.`,
+ ar:`أشكال البيانات تشمل الأرقام والنصوص والأسماء والتواريخ والصور والأصوات والقياسات والرموز؛ والمستخدمون هم الأشخاص الذين يتفاعلون مع النظام.`},
+{en:`An input device provides data and control signals and translates information into a form the computer can process (keyboard, mouse, scanner, webcam, joystick…).`,
+ ar:`جهاز الإدخال يقدّم البيانات وإشارات التحكم ويترجم المعلومات إلى صورة يستطيع الكمبيوتر معالجتها (لوحة مفاتيح، فأرة، ماسح، كاميرا ويب، عصا تحكم…).`},
+{en:`An output device communicates processing results to the user (monitor, printer, plotter, speakers, projector, COM).`,
+ ar:`جهاز الإخراج يوصل نتائج المعالجة إلى المستخدم (شاشة، طابعة، رسّام بياني، سماعات، جهاز عرض، COM).`},
+{en:`Processing transforms input into a useful output: dirty clothes → washing machine → clean clothes; raw data → CPU → processed information.`,
+ ar:`المعالجة تحوّل المدخلات إلى مخرجات مفيدة: ملابس متسخة ← غسالة ← ملابس نظيفة؛ بيانات خام ← CPU ← معلومات معالَجة.`},
+{en:`Data = raw facts and observations without context (e.g., 85, 72, 91, 64, 88).`,
+ ar:`البيانات = حقائق وملاحظات خام بلا سياق (مثل 85، 72، 91، 64، 88).`},
+{en:`Information = processed data with meaning and context (e.g., "the average score is 80"); it answers Who? What? Where? When? How many?`,
+ ar:`المعلومات = بيانات معالَجة لها معنى وسياق (مثل "المتوسط 80")، وتجيب على: مَن؟ ماذا؟ أين؟ متى؟ كم؟`},
+{en:`Knowledge = understanding and applying information, developed through experience, learning, and analysis; it answers "How?".`,
+ ar:`المعرفة = فهم المعلومات وتطبيقها، وتتطور بالخبرة والتعلم والتحليل، وتجيب على سؤال "كيف؟".`},
+{en:`Wisdom = evaluated understanding used for sound judgment and decision-making; it answers "Why should we act this way?".`,
+ ar:`الحكمة = فهم مُقيَّم يُستخدم لإصدار حكم سليم واتخاذ قرار، وتجيب على سؤال "لماذا يجب أن نتصرف بهذه الطريقة؟".`},
+{en:`Attendance example: 8/12/5 = data; "A attended 8 of 12, C only 5" = information; "C is at risk" = knowledge; advisor contacts C = wisdom.`,
+ ar:`مثال الحضور: 8/12/5 = بيانات؛ "أ حضر 8 من 12 وج حضر 5 فقط" = معلومات؛ "ج معرّض للخطر" = معرفة؛ تواصل المرشد مع ج = حكمة.`},
+{en:`Computers are classified by processing power, size, number of users, intended use, and performance into PC, Workstation, Minicomputer, Mainframe, and Supercomputer.`,
+ ar:`تُصنَّف الكمبيوترات وفق قوة المعالجة والحجم وعدد المستخدمين والغرض والأداء إلى: حاسب شخصي، محطة عمل، حاسب متوسط، حاسب مركزي، وحاسب عظيم.`},
+{en:`A PC serves one person at a time; a workstation serves one user but for demanding professional tasks; a minicomputer was a mid-range multi-user system and is now a historical term.`,
+ ar:`الحاسب الشخصي يخدم شخصًا واحدًا في الوقت نفسه؛ ومحطة العمل تخدم مستخدمًا واحدًا لكن لمهام مهنية متطلبة؛ والحاسب المتوسط كان نظامًا متوسط المدى متعدد المستخدمين وأصبح مصطلحًا تاريخيًا.`},
+{en:`Mainframes handle huge transactions with high reliability and continuous operation (banking, government); supercomputers give extreme performance using parallel processors (weather, physics, drugs, space, AI).`,
+ ar:`الحاسبات المركزية تعالج معاملات ضخمة بموثوقية عالية وتشغيل مستمر (البنوك والحكومة)؛ والحاسبات العظمى تقدم أداءً فائقًا بمعالجات متوازية (الطقس، الفيزياء، الأدوية، الفضاء، الذكاء الاصطناعي).`},
+{en:`Computer characteristics: Speed, Accuracy, Diligence, Versatility, Storage Capacity, Automation, Reliability, Multitasking — but results depend on the instructions, the data, the software, and how the system is designed and operated.`,
+ ar:`خصائص الكمبيوتر: السرعة، الدقة، المثابرة، تعدد الاستخدامات، سعة التخزين، الأتمتة، الموثوقية، تعدد المهام — لكن النتائج تعتمد على التعليمات والبيانات والبرمجيات وطريقة تصميم النظام وتشغيله.`}
+];
+
+/* =========================================================
+   5. FINAL EXAM — 60 QUESTIONS
+   ========================================================= */
+const QUESTIONS = [
+{topic:"Introduction", q:`A computer is best defined as:`, qAr:`أفضل تعريف للكمبيوتر هو:`,
+ o:[`an electronic system that accepts data, processes it, produces information, and stores it`,`a machine that only stores data for future use`,`a collection of independent hardware parts`,`a program that performs calculations`], a:0,
+ exp:`Section 1.1 defines a computer as an electronic system that accepts data as input, processes it according to instructions, produces information as output, and stores data and information for future use.`,
+ expAr:`يعرّف القسم 1.1 الكمبيوتر بأنه نظام إلكتروني يستقبل البيانات كمدخلات، ويعالجها وفق التعليمات، وينتج المعلومات كمخرجات، ويخزّنها للاستخدام المستقبلي.`},
+
+{topic:"Introduction", q:`The basic operation of a computer is correctly represented by:`, qAr:`العملية الأساسية للكمبيوتر تُعبَّر عنها بشكل صحيح بـ:`,
+ o:[`Input → Output → Processing → Storage`,`Input → Processing → Output → Storage`,`Processing → Input → Storage → Output`,`Storage → Input → Processing → Output`], a:1,
+ exp:`The order given in section 1.1 is Input → Processing → Output → Storage.`,
+ expAr:`الترتيب المذكور في القسم 1.1 هو: مدخلات ← معالجة ← مخرجات ← تخزين.`},
+
+{topic:"Introduction", q:`A computer operates under the control of instructions stored in its:`, qAr:`يعمل الكمبيوتر تحت سيطرة تعليمات مخزّنة في:`,
+ o:[`monitor`,`memory`,`keyboard`,`printer`], a:1,
+ exp:`A computer is an electronic device that operates under the control of instructions stored in its memory.`,
+ expAr:`الكمبيوتر جهاز إلكتروني يعمل تحت سيطرة تعليمات مخزّنة في ذاكرته.`},
+
+{topic:"Introduction", q:`A computer system consists of:`, qAr:`يتكوّن نظام الكمبيوتر من:`,
+ o:[`hardware only`,`software and data only`,`hardware, software, data, and users`,`hardware and users only`], a:2,
+ exp:`The main components of a computer system are hardware, software, data, and users.`,
+ expAr:`المكونات الرئيسية لنظام الكمبيوتر هي: المكونات المادية والبرمجيات والبيانات والمستخدمون.`},
+
+{topic:"Functions", q:`How many major functions of a computer are listed in section 1.2?`, qAr:`كم عدد الوظائف الرئيسية للكمبيوتر كما ورد في القسم 1.2؟`,
+ o:[`Three`,`Four`,`Five`,`Six`], a:2,
+ exp:`The five functions are: Input, Processing, Output, Storage, and Control.`,
+ expAr:`الوظائف الخمس هي: الإدخال، المعالجة، الإخراج، التخزين، والتحكم.`},
+
+{topic:"Functions", q:`Which function controls and coordinates the operations performed by the components according to program instructions?`, qAr:`أي وظيفة تتحكم في عمليات المكونات وتنسّقها وفق تعليمات البرنامج؟`,
+ o:[`Input`,`Storage`,`Control`,`Output`], a:2,
+ exp:`Section 1.2.5: the computer controls and coordinates the different operations performed by its components according to the instructions provided by programs.`,
+ expAr:`القسم 1.2.5: يتحكم الكمبيوتر في العمليات المختلفة التي تنفّذها مكوناته وينسّق بينها وفق التعليمات التي تقدّمها البرامج.`},
+
+{topic:"Functions", q:`Entering data and instructions into a computer system is called:`, qAr:`إدخال البيانات والتعليمات إلى نظام الكمبيوتر يُسمى:`,
+ o:[`processing`,`input`,`output`,`storage`], a:1,
+ exp:`Input is the process of entering data and instructions into a computer system.`,
+ expAr:`الإدخال هو عملية إدخال البيانات والتعليمات إلى نظام الكمبيوتر.`},
+
+{topic:"Functions", q:`Processing is the operation that:`, qAr:`المعالجة هي العملية التي:`,
+ o:[`enters data into the system`,`transforms input data into meaningful results`,`stores data permanently`,`displays results to the user`], a:1,
+ exp:`Processing is the operation performed by the computer to transform input data into meaningful results.`,
+ expAr:`المعالجة هي العملية التي يقوم بها الكمبيوتر لتحويل بيانات الإدخال إلى نتائج ذات معنى.`},
+
+{topic:"Functions", q:`According to section 1.2.4, storage may be:`, qAr:`وفق القسم 1.2.4، قد يكون التخزين:`,
+ o:[`temporary only`,`long-term only`,`temporary or long-term`,`neither temporary nor long-term`], a:2,
+ exp:`Storage may be temporary or long-term depending on the type of memory or storage device used.`,
+ expAr:`قد يكون التخزين مؤقتًا أو طويل المدى حسب نوع الذاكرة أو جهاز التخزين المستخدم.`},
+
+{topic:"Components", q:`Hardware refers to:`, qAr:`تشير المكونات المادية إلى:`,
+ o:[`programs and instructions`,`the physical components of a computer system that can be seen and touched`,`raw facts and figures`,`people who use the computer`], a:1,
+ exp:`Hardware is the set of physical components that can be seen and touched, and it provides the physical resources required for computation.`,
+ expAr:`المكونات المادية هي الأجزاء الفيزيائية التي يمكن رؤيتها ولمسها، وتوفّر الموارد الفيزيائية اللازمة للحوسبة.`},
+
+{topic:"Components", q:`Which of the following is NOT an example of hardware?`, qAr:`أي مما يلي ليس مثالًا على المكونات المادية؟`,
+ o:[`Motherboard`,`Graphics card`,`Operating system`,`Monitor`], a:2,
+ exp:`An operating system is software. Hardware examples in the chapter are monitor, keyboard, mouse, CPU, memory, motherboard, storage devices, graphics cards, and sound cards.`,
+ expAr:`نظام التشغيل هو برمجيات. أمثلة المكونات المادية في الفصل: الشاشة، لوحة المفاتيح، الفأرة، المعالج، الذاكرة، اللوحة الأم، أجهزة التخزين، كروت الرسومات، وكروت الصوت.`},
+
+{topic:"Components", q:`Software is:`, qAr:`البرمجيات هي:`,
+ o:[`tangible and can be touched`,`a collection of programs, instructions, and related data that tells the computer what to do`,`a physical storage device`,`raw data`], a:1,
+ exp:`Software is a collection of programs, instructions, and related data that tells a computer what to do and how to perform specific operations; it is intangible.`,
+ expAr:`البرمجيات مجموعة من البرامج والتعليمات والبيانات المرتبطة بها تخبر الكمبيوتر بما يجب فعله وكيفية تنفيذ عمليات محددة، وهي غير ملموسة.`},
+
+{topic:"Components", q:`Software is broadly classified into:`, qAr:`تُصنَّف البرمجيات بشكل عام إلى:`,
+ o:[`hardware and firmware`,`system software and application software`,`data and information`,`input and output`], a:1,
+ exp:`Software is classified into System Software and Application Software.`,
+ expAr:`تُصنَّف البرمجيات إلى برمجيات النظام وبرمجيات التطبيقات.`},
+
+{topic:"Components", q:`Which of the following is NOT listed in the chapter as a form of data?`, qAr:`أي مما يلي لم يُذكر في الفصل كشكل من أشكال البيانات؟`,
+ o:[`Images`,`Sounds`,`Measurements`,`Instructions`], a:3,
+ exp:`Data forms listed are numbers, text, names, dates, images, sounds, measurements, and symbols. "Instructions" belongs to software/programs.`,
+ expAr:`أشكال البيانات المذكورة: الأرقام، النصوص، الأسماء، التواريخ، الصور، الأصوات، القياسات، الرموز. أما "التعليمات" فتنتمي إلى البرمجيات/البرامج.`},
+
+{topic:"Components", q:`Users in a computer system are:`, qAr:`المستخدمون في نظام الكمبيوتر هم:`,
+ o:[`the physical parts of the computer`,`the people who interact with computer systems`,`the programs stored in memory`,`the raw facts processed by the CPU`], a:1,
+ exp:`Users are people who interact with computer systems, such as students, programmers, and system administrators.`,
+ expAr:`المستخدمون هم الأشخاص الذين يتفاعلون مع أنظمة الكمبيوتر مثل الطلاب والمبرمجين ومسؤولي النظام.`},
+
+{topic:"Input Devices", q:`An input device is a hardware component used to:`, qAr:`جهاز الإدخال مكوّن مادي يُستخدم لـ:`,
+ o:[`display processing results`,`provide data and control signals to a computer system`,`store data permanently`,`print documents`], a:1,
+ exp:`An input device is used to provide data and control signals to a computer system.`,
+ expAr:`جهاز الإدخال يُستخدم لتقديم البيانات وإشارات التحكم إلى نظام الكمبيوتر.`},
+
+{topic:"Input Devices", q:`Which of the following is an input device?`, qAr:`أي مما يلي يُعد جهاز إدخال؟`,
+ o:[`Plotter`,`Speaker`,`Scanner`,`Monitor`], a:2,
+ exp:`The scanner is in the chapter's list of input devices; plotter, speaker, and monitor are output devices.`,
+ expAr:`الماسح الضوئي ضمن قائمة أجهزة الإدخال في الفصل؛ أما الرسّام البياني والسماعة والشاشة فأجهزة إخراج.`},
+
+{topic:"Input Devices", q:`Which of the following is NOT an input device?`, qAr:`أي مما يلي ليس جهاز إدخال؟`,
+ o:[`Trackball`,`Joystick`,`Projector`,`Webcam`], a:2,
+ exp:`A projector is an output device. Trackball, joystick, and webcam are input devices.`,
+ expAr:`جهاز العرض (Projector) من أجهزة الإخراج. أما الكرة الدوّارة وعصا التحكم وكاميرا الويب فأجهزة إدخال.`},
+
+{topic:"Input Devices", q:`Input devices translate information from a form that humans can understand into:`, qAr:`تترجم أجهزة الإدخال المعلومات من صورة يفهمها الإنسان إلى:`,
+ o:[`a printed form`,`a form that the computer can process`,`a graphical form`,`an audio form`], a:1,
+ exp:`Input devices translate information from a form that humans can understand into a form that the computer can process.`,
+ expAr:`تترجم أجهزة الإدخال المعلومات من صورة يفهمها الإنسان إلى صورة يستطيع الكمبيوتر معالجتها.`},
+
+{topic:"Output Devices", q:`An output device is used to:`, qAr:`جهاز الإخراج يُستخدم لـ:`,
+ o:[`enter data into the computer`,`communicate the results of data processing to the user`,`process instructions`,`store programs`], a:1,
+ exp:`An output device communicates the results of data processing to the user, converting electronic information into a human-understandable form.`,
+ expAr:`جهاز الإخراج يوصل نتائج معالجة البيانات إلى المستخدم، ويحوّل المعلومات الإلكترونية إلى صورة يفهمها الإنسان.`},
+
+{topic:"Output Devices", q:`Which of the following is an output device?`, qAr:`أي مما يلي يُعد جهاز إخراج؟`,
+ o:[`Graphics tablet`,`Plotter`,`Barcode reader`,`Touchpad`], a:1,
+ exp:`The plotter is listed among output devices; graphics tablet, barcode reader, and touchpad are input devices.`,
+ expAr:`الرسّام البياني ضمن أجهزة الإخراج، أما لوح الرسومات وقارئ الباركود ولوحة اللمس فأجهزة إدخال.`},
+
+{topic:"Output Devices", q:`Computer Output Microfilm (COM) is an example of:`, qAr:`ميكروفيلم مخرجات الكمبيوتر (COM) مثال على:`,
+ o:[`an input device`,`an output device`,`system software`,`a processing unit`], a:1,
+ exp:`COM appears in the chapter's list of output devices.`,
+ expAr:`COM مذكور في قائمة أجهزة الإخراج في الفصل.`},
+
+{topic:"IPO", q:`In the model Input → Processing → Output, the processor:`, qAr:`في نموذج مدخلات ← معالجة ← مخرجات، المعالج:`,
+ o:[`provides the data to the system`,`performs an operation on the input`,`displays the output`,`stores the output`], a:1,
+ exp:`The processor performs an operation on the input; the output is the result produced after processing.`,
+ expAr:`المعالج يُجري عملية على المدخلات، والمخرجات هي النتيجة المنتجة بعد المعالجة.`},
+
+{topic:"IPO", q:`In the everyday example table, dirty clothes : washing machine :: raw chicken :`, qAr:`في جدول الأمثلة اليومية: ملابس متسخة : غسالة :: دجاج نيء :`,
+ o:[`clean clothes`,`cooking process`,`roast chicken`,`hairdresser`], a:1,
+ exp:`The table gives: raw chicken (input) → cooking process (processor) → roast chicken (output).`,
+ expAr:`الجدول يعطي: دجاج نيء (مدخلات) ← عملية الطهي (معالج) ← دجاج مشوي (مخرجات).`},
+
+{topic:"IPO", q:`In the computer example table, two numbers processed by the ALU produce:`, qAr:`في جدول الأمثلة الحاسوبية، رقمان تُعالجهما وحدة الحساب والمنطق ينتجان:`,
+ o:[`processed information`,`a calculated result`,`an executed program`,`a required action`], a:1,
+ exp:`The table gives: two numbers → ALU → calculated result.`,
+ expAr:`الجدول يعطي: رقمان ← ALU ← نتيجة محسوبة.`},
+
+{topic:"IPO", q:`Program instructions processed by the CPU produce:`, qAr:`تعليمات البرنامج التي تعالجها وحدة المعالجة المركزية تنتج:`,
+ o:[`an executed program`,`raw data`,`a calculated result`,`processed information`], a:0,
+ exp:`The table gives: program instructions → CPU → executed program.`,
+ expAr:`الجدول يعطي: تعليمات البرنامج ← CPU ← برنامج منفَّذ.`},
+
+{topic:"IPO", q:`The important idea of section 1.6 is that processing:`, qAr:`الفكرة المهمة في القسم 1.6 هي أن المعالجة:`,
+ o:[`stores input for later use`,`transforms input into a useful output`,`copies data from one device to another`,`deletes unwanted data`], a:1,
+ exp:`The chapter states: "Processing transforms input into a useful output."`,
+ expAr:`ينص الفصل على أن: "المعالجة تحوّل المدخلات إلى مخرجات مفيدة".`},
+
+{topic:"DIKW", q:`Information is:`, qAr:`المعلومات هي:`,
+ o:[`raw facts and observations`,`data that has been processed, organized, structured, or interpreted so that it becomes meaningful and useful`,`instructions stored in memory`,`a physical component of the computer`], a:1,
+ exp:`Information is processed data with meaning and context.`,
+ expAr:`المعلومات هي بيانات معالَجة لها معنى وسياق.`},
+
+{topic:"DIKW", q:`The values 85, 72, 91, 64, 88 without any context represent:`, qAr:`القيم 85، 72، 91، 64، 88 بدون سياق تمثّل:`,
+ o:[`information`,`knowledge`,`data`,`wisdom`], a:2,
+ exp:`They are raw data; without additional context we do not know what they represent.`,
+ expAr:`هي بيانات خام؛ وبدون سياق إضافي لا نعرف ماذا تمثّل.`},
+
+{topic:"DIKW", q:`"The average examination score is 80" is an example of:`, qAr:`"متوسط درجة الامتحان هو 80" مثال على:`,
+ o:[`data`,`information`,`wisdom`,`input`], a:1,
+ exp:`The calculated average is processed data with meaning and context, i.e. information.`,
+ expAr:`المتوسط المحسوب هو بيانات معالَجة لها معنى وسياق، أي معلومات.`},
+
+{topic:"DIKW", q:`Which question does information help answer?`, qAr:`أي سؤال تساعد المعلومات على الإجابة عليه؟`,
+ o:[`Why should we act this way?`,`How many?`,`How?`,`What will happen next year?`], a:1,
+ exp:`Information answers questions such as Who? What? Where? When? How many?`,
+ expAr:`المعلومات تجيب على أسئلة مثل: مَن؟ ماذا؟ أين؟ متى؟ كم العدد؟`},
+
+{topic:"DIKW", q:`Knowledge is developed through:`, qAr:`تتطور المعرفة من خلال:`,
+ o:[`storing raw data only`,`experience, learning, analysis, and application of information`,`deleting information`,`printing information`], a:1,
+ exp:`Knowledge is developed through experience, learning, analysis, understanding, application of information, and recognizing relationships and patterns.`,
+ expAr:`تتطور المعرفة من خلال الخبرة والتعلم والتحليل والفهم وتطبيق المعلومات وإدراك العلاقات والأنماط.`},
+
+{topic:"DIKW", q:`Knowledge often helps answer the question:`, qAr:`غالبًا تساعد المعرفة على الإجابة على سؤال:`,
+ o:[`Who?`,`How many?`,`How?`,`When?`], a:2,
+ exp:`Knowledge often helps answer the question "How?".`,
+ expAr:`غالبًا تساعد المعرفة على الإجابة على سؤال "كيف؟".`},
+
+{topic:"DIKW", q:`Wisdom involves:`, qAr:`تتضمن الحكمة:`,
+ o:[`collecting raw facts`,`processing data into information`,`evaluating knowledge and using it to make sound decisions or judgments`,`storing information for future use`], a:2,
+ exp:`Wisdom is a higher level of understanding that involves evaluating knowledge and using it to make sound decisions or judgments.`,
+ expAr:`الحكمة مستوى أعلى من الفهم يتضمن تقييم المعرفة واستخدامها لاتخاذ قرارات أو أحكام سليمة.`},
+
+{topic:"DIKW", q:`Wisdom helps answer the question:`, qAr:`تساعد الحكمة على الإجابة على السؤال:`,
+ o:[`What?`,`Where?`,`Why should we act this way?`,`How many?`], a:2,
+ exp:`Wisdom helps answer "Why should we act this way?".`,
+ expAr:`تساعد الحكمة على الإجابة على "لماذا يجب أن نتصرف بهذه الطريقة؟".`},
+
+{topic:"Attendance Example", q:`In the university attendance example, "Student A: 8, Student B: 12, Student C: 5" represents:`, qAr:`في مثال حضور الجامعة، "الطالب أ: 8، الطالب ب: 12، الطالب ج: 5" يمثّل:`,
+ o:[`data`,`information`,`knowledge`,`wisdom`], a:0,
+ exp:`These are attendance records — raw data.`,
+ expAr:`هذه سجلات حضور — بيانات خام.`},
+
+{topic:"Attendance Example", q:`"Student A attended 8 out of 12 classes, while Student C attended only 5 out of 12" represents:`, qAr:`"حضر الطالب أ 8 من 12 محاضرة، بينما حضر الطالب ج 5 فقط من 12" يمثّل:`,
+ o:[`data`,`information`,`knowledge`,`wisdom`], a:1,
+ exp:`The data has been organized and given context, so it is information.`,
+ expAr:`لقد نُظّمت البيانات وأُعطيت سياقًا، لذا فهي معلومات.`},
+
+{topic:"Attendance Example", q:`"Student C has a low attendance rate and may be at greater risk of missing important course content" represents:`, qAr:`"لدى الطالب ج نسبة حضور منخفضة وقد يكون أكثر عرضة لتفويت محتوى مهم" يمثّل:`,
+ o:[`data`,`information`,`knowledge`,`wisdom`], a:2,
+ exp:`The information has been interpreted, which is knowledge.`,
+ expAr:`لقد فُسّرت المعلومات، وهذا يمثّل معرفة.`},
+
+{topic:"Attendance Example", q:`The academic advisor decides to contact Student C and provide support. This represents:`, qAr:`يقرر المرشد الأكاديمي التواصل مع الطالب ج وتقديم الدعم. هذا يمثّل:`,
+ o:[`data`,`information`,`knowledge`,`wisdom`], a:3,
+ exp:`The knowledge has been used to make a decision, which is the application of wisdom.`,
+ expAr:`لقد استُخدمت المعرفة لاتخاذ قرار، وهذا تطبيق للحكمة.`},
+
+{topic:"Classification", q:`Traditional classifications of computers include all of the following EXCEPT:`, qAr:`تشمل التصنيفات التقليدية للكمبيوترات كل ما يلي ما عدا:`,
+ o:[`Personal computers`,`Workstations`,`Smartphones`,`Supercomputers`], a:2,
+ exp:`The five traditional classifications are: personal computers, workstations, minicomputers, mainframe computers, and supercomputers.`,
+ expAr:`التصنيفات التقليدية الخمسة هي: الحاسبات الشخصية، محطات العمل، الحاسبات المتوسطة، الحاسبات المركزية، والحاسبات العظمى.`},
+
+{topic:"Classification", q:`A computer designed primarily for use by one person at a time is a:`, qAr:`الكمبيوتر المُصمَّم أساسًا لاستخدام شخص واحد في الوقت نفسه هو:`,
+ o:[`mainframe computer`,`personal computer`,`supercomputer`,`minicomputer`], a:1,
+ exp:`A Personal Computer (PC) is designed primarily for use by one person at a time.`,
+ expAr:`الحاسب الشخصي مُصمَّم أساسًا لاستخدام شخص واحد في الوقت نفسه.`},
+
+{topic:"Classification", q:`In a typical personal computer, RAM is used for:`, qAr:`في الحاسب الشخصي النموذجي، تُستخدم ذاكرة RAM لـ:`,
+ o:[`long-term storage`,`temporary storage`,`processing instructions`,`displaying information`], a:1,
+ exp:`A typical PC includes RAM for temporary storage and an SSD or HDD for long-term storage.`,
+ expAr:`يشمل الحاسب النموذجي ذاكرة RAM للتخزين المؤقت وقرص SSD أو HDD للتخزين طويل المدى.`},
+
+{topic:"Classification", q:`A workstation is a powerful computer designed primarily for:`, qAr:`محطة العمل كمبيوتر قوي مُصمَّم أساسًا لـ:`,
+ o:[`casual home use by several users`,`one user and demanding professional or technical tasks`,`supporting thousands of users at once`,`weather and climate modeling only`], a:1,
+ exp:`A workstation is intended for one user and for demanding professional or technical tasks.`,
+ expAr:`محطة العمل مخصَّصة لمستخدم واحد ولمهام مهنية أو تقنية متطلبة.`},
+
+{topic:"Classification", q:`Compared with a typical personal computer, a workstation may provide:`, qAr:`بالمقارنة مع الحاسب الشخصي النموذجي، قد توفّر محطة العمل:`,
+ o:[`a less powerful processor`,`smaller memory capacity`,`higher-performance graphics processing`,`lower reliability`], a:2,
+ exp:`A workstation may provide a more powerful processor, larger memory, higher-performance graphics, high-quality display, and greater reliability.`,
+ expAr:`قد توفّر محطة العمل معالجًا أقوى وذاكرة أكبر ورسومات أعلى أداءً وعرضًا عالي الجودة وموثوقية أكبر.`},
+
+{topic:"Classification", q:`Which statement about minicomputers is correct?`, qAr:`أي العبارات التالية عن الحاسبات المتوسطة صحيحة؟`,
+ o:[`They were more powerful than mainframe computers`,`They were mid-range systems that could support multiple users simultaneously`,`The term is widely used for modern PCs`,`They were designed for a single user only`], a:1,
+ exp:`A minicomputer was a mid-range system supporting multiple users; it was more powerful than a PC but less powerful and less expensive than a mainframe, and the term is now largely historical.`,
+ expAr:`الحاسب المتوسط كان نظامًا متوسط المدى يدعم عدة مستخدمين، وكان أقوى من الحاسب الشخصي وأقل قوة وتكلفة من الحاسب المركزي، ومصطلحه أصبح تاريخيًا إلى حد كبير.`},
+
+{topic:"Mainframe & Supercomputer", q:`A mainframe computer is designed to:`, qAr:`الحاسب المركزي مُصمَّم لـ:`,
+ o:[`serve one person at a time`,`process very large amounts of data and transactions and support many users and applications simultaneously`,`perform only scientific simulations`,`replace personal computers`], a:1,
+ exp:`A mainframe processes very large amounts of data and transactions and supports many users and applications simultaneously.`,
+ expAr:`يعالج الحاسب المركزي كميات ضخمة من البيانات والمعاملات ويدعم العديد من المستخدمين والتطبيقات في الوقت نفسه.`},
+
+{topic:"Mainframe & Supercomputer", q:`Which organization most clearly needs a mainframe computer?`, qAr:`أي مؤسسة تحتاج بشكل أوضح إلى حاسب مركزي؟`,
+ o:[`A single student at home`,`A bank processing financial transactions`,`A person writing a report`,`A home user playing music`], a:1,
+ exp:`Mainframe applications include banking and financial transactions and government systems.`,
+ expAr:`من تطبيقات الحاسبات المركزية المعاملات المصرفية والمالية والأنظمة الحكومية.`},
+
+{topic:"Mainframe & Supercomputer", q:`A supercomputer is designed to provide:`, qAr:`الحاسب العظيم مُصمَّم لتقديم:`,
+ o:[`extremely high computational performance`,`basic word processing`,`low-cost single-user computing`,`simple database storage`], a:0,
+ exp:`A supercomputer provides extremely high computational performance.`,
+ expAr:`يقدّم الحاسب العظيم أداءً حوسبيًا فائقًا.`},
+
+{topic:"Mainframe & Supercomputer", q:`Supercomputers solve complex computational problems by:`, qAr:`تحل الحاسبات العظمى المشكلات الحوسبية المعقدة عن طريق:`,
+ o:[`using a single slow processor`,`performing enormous numbers of calculations, often using many processors working in parallel`,`storing more data than other computers`,`printing results faster`], a:1,
+ exp:`They perform enormous numbers of calculations, often using many processors working in parallel.`,
+ expAr:`تنفّذ أعدادًا هائلة من العمليات الحسابية، وغالبًا باستخدام معالجات كثيرة تعمل بالتوازي.`},
+
+{topic:"Mainframe & Supercomputer", q:`Which of the following is a common supercomputer application?`, qAr:`أي مما يلي من التطبيقات الشائعة للحاسبات العظمى؟`,
+ o:[`Weather and climate modeling`,`Typing reports`,`Reading barcodes`,`Sending emails`], a:0,
+ exp:`Supercomputer applications include weather and climate modeling, scientific research, physics simulations, molecular and drug research, space research, and computational fluid dynamics.`,
+ expAr:`من تطبيقاتها: نمذجة الطقس والمناخ، البحث العلمي، محاكاة الفيزياء، أبحاث الجزيئات والأدوية، أبحاث الفضاء، وديناميكا السوائل الحسابية.`},
+
+{topic:"Characteristics", q:`The characteristic that allows computers to process data very quickly is:`, qAr:`الخاصية التي تتيح للكمبيوتر معالجة البيانات بسرعة كبيرة هي:`,
+ o:[`Speed`,`Accuracy`,`Diligence`,`Versatility`], a:0,
+ exp:`Speed: computers can process data very quickly and complete large tasks in a short period.`,
+ expAr:`السرعة: يستطيع الكمبيوتر معالجة البيانات بسرعة كبيرة وإنجاز المهام الكبيرة في فترة قصيرة.`},
+
+{topic:"Characteristics", q:`Computers provide a high degree of accuracy when:`, qAr:`يوفّر الكمبيوتر درجة عالية من الدقة عندما:`,
+ o:[`the monitor is large`,`the data and instructions supplied to them are correct`,`many users use the computer`,`the computer is new`], a:1,
+ exp:`Accuracy depends on correct data and correct instructions (Garbage In, Garbage Out).`,
+ expAr:`تعتمد الدقة على صحة البيانات وصحة التعليمات (مدخلات سيئة = مخرجات سيئة).`},
+
+{topic:"Characteristics", q:`The characteristic meaning a computer does not become tired or fatigued when performing repetitive operations is:`, qAr:`الخاصية التي تعني أن الكمبيوتر لا يتعب عند تنفيذ العمليات المتكررة هي:`,
+ o:[`Speed`,`Accuracy`,`Diligence`,`Reliability`], a:2,
+ exp:`Diligence: a computer does not become tired or fatigued when performing repetitive operations.`,
+ expAr:`المثابرة: لا يشعر الكمبيوتر بالتعب أو الإجهاد عند تنفيذ العمليات المتكررة.`},
+
+{topic:"Characteristics", q:`The ability of computers to store large volumes of data and retrieve them when required is called:`, qAr:`قدرة الكمبيوتر على تخزين كميات كبيرة من البيانات واسترجاعها عند الحاجة تُسمّى:`,
+ o:[`Versatility`,`Storage capability`,`Automation`,`Multitasking`], a:1,
+ exp:`Storage capability: computers can store large volumes of data and information and retrieve them when required.`,
+ expAr:`سعة التخزين: يستطيع الكمبيوتر تخزين كميات كبيرة من البيانات والمعلومات واسترجاعها عند الحاجة.`},
+
+{topic:"Characteristics", q:`Using the same computer to prepare a document, play music, browse the web, and perform calculations demonstrates:`, qAr:`استخدام الكمبيوتر نفسه لإعداد مستند وتشغيل الموسيقى وتصفح الويب وإجراء الحسابات يدل على:`,
+ o:[`Diligence`,`Versatility`,`Reliability`,`Speed`], a:1,
+ exp:`This is versatility — a computer can perform different types of tasks.`,
+ expAr:`هذا هو تعدد الاستخدامات — فالكمبيوتر يستطيع أداء أنواع مختلفة من المهام.`},
+
+{topic:"Characteristics", q:`According to the characteristics figure, automation means that:`, qAr:`وفق شكل الخصائص، تعني الأتمتة أن:`,
+ o:[`computers never make mistakes`,`once a program is given, computers automatically execute the instructions, reducing the need for human intervention`,`computers can store large amounts of data`,`computers can do many tasks at the same time`], a:1,
+ exp:`Automation: once a program is given, computers automatically execute the instructions, reducing human intervention.`,
+ expAr:`الأتمتة: بمجرد إعطاء برنامج، ينفّذ الكمبيوتر التعليمات تلقائيًا مما يقلل التدخل البشري.`},
+
+{topic:"Characteristics", q:`Reliability means that computers:`, qAr:`تعني الموثوقية أن الكمبيوترات:`,
+ o:[`are dependable and can repeat tasks with the same accuracy and consistent results`,`process data very quickly`,`can perform many tasks at the same time`,`do not get tired`], a:0,
+ exp:`Reliability: computers are reliable and dependable, repeating tasks with the same accuracy and consistent results.`,
+ expAr:`الموثوقية: الكمبيوتر موثوق ويُعتمد عليه، يكرر المهام بنفس الدقة ويعطي نتائج ثابتة.`},
+
+{topic:"Characteristics", q:`Multitasking means that computers can:`, qAr:`تعدد المهام يعني أن الكمبيوتر يمكنه:`,
+ o:[`perform many tasks at the same time and switch quickly from one task to another`,`store data for a long time`,`work without instructions`,`produce very accurate results`], a:0,
+ exp:`Multitasking: performing many tasks at the same time and switching quickly from one task to another.`,
+ expAr:`تعدد المهام: أداء مهام كثيرة في الوقت نفسه والانتقال بسرعة من مهمة إلى أخرى.`},
+
+{topic:"Limitations", q:`A computer can only perform tasks:`, qAr:`لا يستطيع الكمبيوتر أداء المهام إلا:`,
+ o:[`that it decides by itself`,`according to the instructions provided to it`,`without any data`,`without software`], a:1,
+ exp:`A computer can only perform tasks according to the instructions provided to it.`,
+ expAr:`لا يستطيع الكمبيوتر أداء المهام إلا وفق التعليمات المقدَّمة إليه.`},
+
+{topic:"Limitations", q:`According to section 1.10, the computer's results depend on all of the following EXCEPT:`, qAr:`وفق القسم 1.10، تعتمد نتائج الكمبيوتر على كل ما يلي ما عدا:`,
+ o:[`the instructions provided`,`the data supplied`,`the color of the monitor`,`the software used`], a:2,
+ exp:`Results depend on: instructions provided, data supplied, software used, and the way the system is designed and operated. The monitor color is irrelevant.`,
+ expAr:`تعتمد النتائج على: التعليمات المقدَّمة، البيانات المزوَّدة، البرمجيات المستخدمة، وطريقة تصميم النظام وتشغيله. أما لون الشاشة فغير ذي صلة.`}
+];
+
+/* =========================================================
+   6. STATE / STORAGE
+   ========================================================= */
+const LS_KEY = "cf_ch1_state_v1";
+const DEFAULT_STATE = { lastPart:0, studied:[], reviewedCards:[], markedPoints:[], examLast:null, examBest:null };
+let state = Object.assign({}, DEFAULT_STATE);
+
+function loadState(){
+  try{
+    const raw = localStorage.getItem(LS_KEY);
+    if(raw){ state = Object.assign({}, DEFAULT_STATE, JSON.parse(raw)); }
+  }catch(e){ state = Object.assign({}, DEFAULT_STATE); }
+}
+function saveState(){
+  try{ localStorage.setItem(LS_KEY, JSON.stringify(state)); }catch(e){}
+}
+
+let currentView = "dashboard";
+let partIndex = 0;
+let card = { deck: [], pos: 0, revealed: false };
+let exam = { order: [], idx: 0, answers: [], selected: null, revealed: false, started: false, finished: false, showWrong: false };
+
+/* =========================================================
+   7. HELPERS
+   ========================================================= */
+function esc(s){ return String(s); }
+function shuffleArr(a){
+  const r = a.slice();
+  for(let i=r.length-1;i>0;i--){ const j = Math.floor(Math.random()*(i+1)); [r[i],r[j]]=[r[j],r[i]]; }
+  return r;
+}
+function overallProgress(){
+  const p = state.studied.length / PARTS.length;
+  const c = state.reviewedCards.length / FLASHCARDS.length;
+  const e = state.examLast ? 1 : 0;
+  return Math.round((p*0.5 + c*0.25 + e*0.25) * 100);
+}
+function levelName(pct){
+  if(pct >= 90) return t("levelExc");
+  if(pct >= 80) return t("levelVG");
+  if(pct >= 70) return t("levelGood");
+  if(pct >= 60) return t("levelPass");
+  return t("levelFail");
+}
+function go(view){
+  currentView = view;
+  document.querySelectorAll(".view").forEach(v=>v.classList.remove("active"));
+  const el = document.getElementById("view-"+view);
+  if(el) el.classList.add("active");
+  renderTabs();
+  renderCurrent();
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+
+/* =========================================================
+   8. TABS + THEME + LANG
+   ========================================================= */
+function renderTabs(){
+  const tabs = [
+    {id:"dashboard", key:"dashboard"},
+    {id:"study", key:"study"},
+    {id:"cards", key:"cards"},
+    {id:"summary", key:"summary"},
+    {id:"exam", key:"exam"}
+  ];
+  document.getElementById("tabs").innerHTML = tabs.map(x=>
+    `<button data-view="${x.id}" class="${currentView===x.id?'active':''}" onclick="go('${x.id}')">${t(x.key)}</button>`
+  ).join("");
+}
+function toggleTheme(){
+  const root = document.documentElement;
+  const next = root.getAttribute("data-theme") === "dark" ? "light" : "dark";
+  root.setAttribute("data-theme", next);
+  document.getElementById("themeBtn").textContent = next === "dark" ? "☀️" : "🌙";
+  try{ localStorage.setItem("cf_ch1_theme", next); }catch(e){}
+}
+function toggleLang(){
+  lang = (lang === "en") ? "ar" : "en";
+  const root = document.documentElement;
+  root.setAttribute("lang", lang);
+  root.setAttribute("dir", lang === "ar" ? "rtl" : "ltr");
+  document.getElementById("langBtn").textContent = t("langLabel");
+  document.getElementById("appTitle").textContent = t("appTitle");
+  document.getElementById("appSub").textContent = t("appSub");
+  renderTabs();
+  renderCurrent();
+}
+
+/* =========================================================
+   9. RENDER ROUTER
+   ========================================================= */
+function renderCurrent(){
+  if(currentView === "dashboard") renderDashboard();
+  else if(currentView === "study") renderStudy();
+  else if(currentView === "cards") renderCards();
+  else if(currentView === "summary") renderSummary();
+  else if(currentView === "exam") renderExam();
+  else if(currentView === "results") renderResults();
+}
+
+/* =========================================================
+   10. DASHBOARD
+   ========================================================= */
+function renderDashboard(){
+  const pct = overallProgress();
+  const lastPart = Math.min(state.lastPart || 0, PARTS.length-1);
+  const examTxt = state.examLast ? `${state.examLast.score} / 60` : t("notTaken");
+  document.getElementById("view-dashboard").innerHTML = `
+    <div class="card">
+      <h2 class="sec">${t("chapterProgress")}</h2>
+      <p class="muted">${t("appSub")}</p>
+      <div class="progress"><div class="bar" style="width:${pct}%"></div></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap">
+        <strong>${pct}%</strong>
+        <button class="btn primary" onclick="continueLearning()">${t("continueLearning")} →</button>
+      </div>
+    </div>
+
+    <div class="grid stats">
+      <div class="card stat"><span class="num">${state.studied.length}/${PARTS.length}</span><span class="lbl">${t("partsStudied")}</span></div>
+      <div class="card stat"><span class="num">${state.reviewedCards.length}/${FLASHCARDS.length}</span><span class="lbl">${t("cardsReviewed")}</span></div>
+      <div class="card stat"><span class="num">${examTxt}</span><span class="lbl">${t("examScore")}</span></div>
+    </div>
+
+    <h2 class="sec mt">${t("stages")}</h2>
+    <div class="grid stages">
+      <div class="card stage" onclick="go('study')">
+        <span class="badge">1</span><h4>${t("stage1")}</h4><p>${t("stage1d")}</p>
+      </div>
+      <div class="card stage" onclick="go('cards')">
+        <span class="badge">2</span><h4>${t("stage2")}</h4><p>${t("stage2d")}</p>
+      </div>
+      <div class="card stage" onclick="go('summary')">
+        <span class="badge">3</span><h4>${t("stage3")}</h4><p>${t("stage3d")}</p>
+      </div>
+      <div class="card stage" onclick="go('exam')">
+        <span class="badge">4</span><h4>${t("stage4")}</h4><p>${t("stage4d")}</p>
+      </div>
+    </div>
+  `;
+}
+function continueLearning(){
+  partIndex = Math.min(state.lastPart || 0, PARTS.length-1);
+  go("study");
+}
+
+/* =========================================================
+   11. STUDY
+   ========================================================= */
+function renderStudy(){
+  partIndex = Math.max(0, Math.min(partIndex, PARTS.length-1));
+  const p = PARTS[partIndex];
+  state.lastPart = partIndex;
+  if(!state.studied.includes(partIndex)){ state.studied.push(partIndex); }
+  saveState();
+
+  const terms = (p.terms||[]).map(x=>`<span class="chip"><b>${esc(x[0])}</b> — ${esc(x[1])}</span>`).join("");
+
+  document.getElementById("view-study").innerHTML = `
+    <div class="toolbar">
+      <button class="btn" onclick="prevPart()" ${partIndex===0?"disabled":""}>${t("prevPart")}</button>
+      <span class="counter-pill">${t("part")} ${partIndex+1} / ${PARTS.length}</span>
+      <button class="btn primary" onclick="nextPart()" ${partIndex===PARTS.length-1?"disabled":""}>${t("nextPart")}</button>
+    </div>
+
+    <article class="card">
+      <h2 class="sec">${esc(p.title)}</h2>
+      <p class="muted ar" dir="rtl">${esc(p.titleAr)}</p>
+
+      <div class="block">
+        <span class="tag">${t("originalText")}</span>
+        <div class="txt en" dir="ltr">${esc(p.en)}</div>
+      </div>
+
+      <div class="block">
+        <span class="tag">${t("arabicTranslation")}</span>
+        <div class="txt ar" dir="rtl">${esc(p.ar)}</div>
+      </div>
+
+      <div class="block explain">
+        <span class="tag">${t("simpleExplanation")}</span>
+        <div class="txt ar" dir="rtl">${esc(p.explain)}</div>
+      </div>
+
+      <div class="block">
+        <span class="tag">${t("keyTerms")}</span>
+        <div class="chips">${terms}</div>
+      </div>
+
+      <div class="block tip">
+        <span class="tag">${t("examTips")}</span>
+        <div class="txt ar" dir="rtl">${esc(p.tips)}</div>
+      </div>
+    </article>
+
+    <div class="toolbar mt">
+      <button class="btn" onclick="prevPart()" ${partIndex===0?"disabled":""}>${t("prevPart")}</button>
+      <span class="muted">${t("studied")}</span>
+      <button class="btn primary" onclick="nextPart()" ${partIndex===PARTS.length-1?"disabled":""}>${t("nextPart")}</button>
+    </div>
+  `;
+}
+function prevPart(){ if(partIndex>0){ partIndex--; renderStudy(); window.scrollTo({top:0,behavior:"smooth"}); } }
+function nextPart(){ if(partIndex<PARTS.length-1){ partIndex++; renderStudy(); window.scrollTo({top:0,behavior:"smooth"}); } }
+
+/* =========================================================
+   12. FLASHCARDS
+   ========================================================= */
+function initCards(){
+  if(card.deck.length !== FLASHCARDS.length){ card.deck = FLASHCARDS.map((_,i)=>i); card.pos = 0; card.revealed = false; }
+}
+function renderCards(){
+  initCards();
+  const i = card.deck[card.pos];
+  const f = FLASHCARDS[i];
+  const isReviewed = state.reviewedCards.includes(i);
+  document.getElementById("view-cards").innerHTML = `
+    <div class="toolbar">
+      <span class="counter-pill">${t("card")} ${card.pos+1} / ${FLASHCARDS.length}</span>
+      <span class="muted">${t("reviewed")}: ${state.reviewedCards.length} / ${FLASHCARDS.length}</span>
+    </div>
+
+    <div class="card flashcard" onclick="toggleCard()">
+      ${isReviewed?`<span class="dot-reviewed">✓ ${t("reviewed")}</span>`:""}
+      <div class="en" dir="ltr" style="font-size:12px;letter-spacing:.6px;color:var(--muted);font-weight:700">QUESTION ${card.pos+1}</div>
+      <div class="q en" dir="ltr">${esc(f.q)}</div>
+      <div class="ar" dir="rtl" style="margin-top:8px;color:var(--muted);font-size:14px">${esc(f.qAr)}</div>
+
+      ${card.revealed ? `
+        <div class="answer">
+          <div class="en" dir="ltr">${esc(f.a)}</div>
+          <div class="ar" dir="rtl">${esc(f.aAr)}</div>
+        </div>` : `
+        <div class="hint">${t("clickReveal")}</div>`}
+    </div>
+
+    <div class="toolbar mt">
+      <div class="right">
+        <button class="btn" onclick="prevCard()">${t("prevCard")}</button>
+        <button class="btn" onclick="nextCard()">${t("nextCard")}</button>
+      </div>
+      <div class="right">
+        <button class="btn" onclick="revealAnswer()">${card.revealed?t("hideAnswer"):t("showAnswer")}</button>
+        <button class="btn" onclick="shuffleCards()">${t("shuffle")}</button>
+        <button class="btn primary" onclick="markReviewed()">${t("markReviewed")}</button>
+      </div>
+    </div>
+  `;
+}
+function toggleCard(){ card.revealed = !card.revealed; renderCards(); }
+function revealAnswer(){ card.revealed = !card.revealed; renderCards(); }
+function prevCard(){ card.pos = (card.pos - 1 + FLASHCARDS.length) % FLASHCARDS.length; card.revealed = false; renderCards(); }
+function nextCard(){ card.pos = (card.pos + 1) % FLASHCARDS.length; card.revealed = false; renderCards(); }
+function shuffleCards(){ card.deck = shuffleArr(card.deck); card.pos = 0; card.revealed = false; renderCards(); }
+function markReviewed(){
+  const i = card.deck[card.pos];
+  if(!state.reviewedCards.includes(i)){ state.reviewedCards.push(i); }
+  saveState();
+  card.revealed = true;
+  renderCards();
+}
+
+/* =========================================================
+   13. SUMMARY
+   ========================================================= */
+function renderSummary(){
+  const items = SUMMARY.map((s,i)=>{
+    const marked = state.markedPoints.includes(i);
+    return `<li>
+      <div class="idx">${i+1}</div>
+      <div class="body">
+        <div class="en" dir="ltr">${esc(s.en)}</div>
+        <div class="ar" dir="rtl">${esc(s.ar)}</div>
+      </div>
+      <input type="checkbox" ${marked?"checked":""} onchange="togglePoint(${i})" title="${t("markImportant")}">
+    </li>`;
+  }).join("");
+
+  document.getElementById("view-summary").innerHTML = `
+    <div class="toolbar">
+      <h2 class="sec" style="margin:0">${t("summary")}</h2>
+      <span class="counter-pill">${state.markedPoints.length} / 20 ${t("pointsMarked")}</span>
+    </div>
+    <ul class="points">${items}</ul>
+  `;
+}
+function togglePoint(i){
+  const k = state.markedPoints.indexOf(i);
+  if(k >= 0) state.markedPoints.splice(k,1); else state.markedPoints.push(i);
+  saveState();
+  renderSummary();
+}
+
+/* =========================================================
+   14. EXAM
+   ========================================================= */
+function startExam(){
+  exam = { order: shuffleArr(QUESTIONS.map((_,i)=>i)), idx:0, answers:[], selected:null, revealed:false, started:true, finished:false, showWrong:false };
+  go("exam");
+}
+function renderExam(){
+  const box = document.getElementById("view-exam");
+  if(!exam.started){
+    box.innerHTML = `
+      <div class="card center">
+        <h2 class="sec">${t("exam")}</h2>
+        <p class="muted" style="max-width:620px;margin:8px auto 18px">${t("examIntro")}</p>
+        <div class="grid stats" style="max-width:520px;margin:0 auto 18px">
+          <div class="stat card"><span class="num">60</span><span class="lbl">${t("question")}</span></div>
+          <div class="stat card"><span class="num">1</span><span class="lbl">${t("finalScore")} / 60</span></div>
+        </div>
+        <button class="btn primary" onclick="startExam()">${t("startExam")}</button>
+      </div>`;
+    return;
+  }
+
+  const qi = exam.order[exam.idx];
+  const q = QUESTIONS[qi];
+  const letters = ["A","B","C","D"];
+
+  const opts = q.o.map((txt, i)=>{
+    let cls = "opt";
+    if(!exam.revealed && exam.selected === i) cls += " sel";
+    if(exam.revealed){
+      if(i === q.a) cls += " correct";
+      else if(i === exam.selected) cls += " wrong";
+    }
+    return `<button class="${cls}" onclick="selectOption(${i})" ${exam.revealed?"disabled":""}>
+      <b>${letters[i]}.</b> ${esc(txt)}
+    </button>`;
+  }).join("");
+
+  const chosen = exam.selected;
+  let feedback = "";
+  if(exam.revealed){
+    const ok = chosen === q.a;
+    feedback = `
+      <div class="feedback ${ok?"ok":"bad"}">
+        <strong>${ok?"✓ "+t("correct"):"✕ "+t("wrong")}</strong>
+        ${ok ? "" : `<div style="margin-top:6px">${t("correctAnswer")}: <b>${letters[q.a]}. ${esc(q.o[q.a])}</b></div>`}
+        <div class="exp">
+          <b>${t("explanation")}:</b>
+          <div class="en" dir="ltr">${esc(q.exp)}</div>
+          <div class="ar" dir="rtl">${esc(q.expAr)}</div>
+        </div>
+      </div>`;
+  }
+
+  const isLast = exam.idx === exam.order.length - 1;
+
+  box.innerHTML = `
+    <div class="exam-head">
+      <span class="counter-pill">${t("question")} ${exam.idx+1} ${t("of")} ${exam.order.length}</span>
+      <span class="topic-tag">${esc(q.topic)}</span>
+    </div>
+    <div class="progress sm"><div class="bar" style="width:${Math.round(((exam.idx)/exam.order.length)*100)}%"></div></div>
+
+    <div class="card" style="margin-top:14px">
+      <div class="en" dir="ltr" style="font-size:16px;font-weight:700">${esc(q.q)}</div>
+      <div class="ar" dir="rtl" style="margin-top:8px;color:var(--muted);font-size:14px">${esc(q.qAr)}</div>
+
+      <div class="mt">${opts}</div>
+
+      ${feedback}
+
+      <div class="toolbar mt" style="justify-content:flex-end">
+        ${exam.revealed
+          ? `<button class="btn primary" onclick="nextQuestion()">${isLast?t("showResults"):t("nextQuestion")}</button>`
+          : `<button class="btn primary" onclick="confirmAnswer()" ${exam.selected===null?"disabled":""}>${t("confirmAnswer")}</button>`}
+      </div>
+    </div>
+  `;
+}
+function selectOption(i){
+  if(exam.revealed) return;
+  exam.selected = i;
+  renderExam();
+}
+function confirmAnswer(){
+  if(exam.selected === null || exam.revealed) return;
+  const qi = exam.order[exam.idx];
+  exam.answers.push({ qi: qi, chosen: exam.selected });
+  exam.revealed = true;
+  renderExam();
+}
+function nextQuestion(){
+  if(exam.idx >= exam.order.length - 1){ finishExam(); return; }
+  exam.idx++;
+  exam.selected = null;
+  exam.revealed = false;
+  renderExam();
+  window.scrollTo({top:0, behavior:"smooth"});
+}
+function finishExam(){
+  let score = 0;
+  exam.answers.forEach(a=>{ if(a.chosen === QUESTIONS[a.qi].a) score++; });
+  const pct = Math.round((score / QUESTIONS.length) * 100);
+  state.examLast = { score: score, total: QUESTIONS.length, pct: pct, date: new Date().toISOString() };
+  state.examBest = state.examBest ? Math.max(state.examBest, score) : score;
+  saveState();
+  exam.finished = true;
+  go("results");
+}
+
+/* =========================================================
+   15. RESULTS
+   ========================================================= */
+function renderResults(){
+  const box = document.getElementById("view-results");
+  if(!exam.finished || !exam.answers.length){
+    box.innerHTML = `
+      <div class="card center">
+        <h2 class="sec">${t("results")}</h2>
+        <p class="muted">${t("noExam")}</p>
+        <button class="btn primary mt" onclick="startExam()">${t("startNow")}</button>
+      </div>`;
+    return;
+  }
+
+  const total = QUESTIONS.length;
+  let correct = 0;
+  const wrongList = [];
+  const topicWrong = {};
+
+  exam.answers.forEach(a=>{
+    const q = QUESTIONS[a.qi];
+    if(a.chosen === q.a) correct++;
+    else {
+      wrongList.push({ q: q, chosen: a.chosen });
+      topicWrong[q.topic] = (topicWrong[q.topic] || 0) + 1;
+    }
+  });
+
+  const wrongCount = total - correct;
+  const pct = Math.round((correct/total)*100);
+  const topics = Object.keys(topicWrong).sort((a,b)=>topicWrong[b]-topicWrong[a]);
+
+  const wrongHtml = wrongList.map((w, i)=>{
+    const letters = ["A","B","C","D"];
+    return `<div class="wrong-item">
+      <div class="q en" dir="ltr">${i+1}. ${esc(w.q.q)}</div>
+      <div class="line">${t("yourAnswer")}: <b style="color:var(--bad)">${letters[w.chosen]}. ${esc(w.q.o[w.chosen])}</b></div>
+      <div class="line">${t("correctAnswer")}: <b>${letters[w.q.a]}. ${esc(w.q.o[w.q.a])}</b></div>
+      <div class="line"><b>${t("explanation")}:</b> ${esc(w.q.exp)}</div>
+      <div class="line ar" dir="rtl" style="color:var(--muted)">${esc(w.q.expAr)}</div>
+    </div>`;
+  }).join("");
+
+  box.innerHTML = `
+    <div class="card center">
+      <h2 class="sec">${t("results")}</h2>
+      <div class="score-big">${correct} / ${total}</div>
+      <div class="level-pill mt">${t("level")}: ${levelName(pct)} · ${pct}%</div>
+      <div class="grid stats" style="margin-top:18px">
+        <div class="card stat"><span class="num" style="color:var(--ok)">${correct}</span><span class="lbl">${t("correctAnswers")}</span></div>
+        <div class="card stat"><span class="num" style="color:var(--bad)">${wrongCount}</span><span class="lbl">${t("wrongAnswers")}</span></div>
+        <div class="card stat"><span class="num">${pct}%</span><span class="lbl">${t("percentage")}</span></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="sub" style="margin-top:0">${t("needsReview")}</h3>
+      ${topics.length
+        ? `<div class="chips">${topics.map(x=>`<span class="chip"><b>${esc(x)}</b> — ${topicWrong[x]}</span>`).join("")}</div>`
+        : `<p class="muted">${t("allCorrect")}</p>`}
+      <div class="toolbar mt" style="justify-content:flex-start">
+        <button class="btn primary" onclick="startExam()">${t("retake")}</button>
+        <button class="btn" onclick="go('dashboard')">${t("backDash")}</button>
+        <button class="btn" onclick="toggleWrongReview()">${exam.showWrong?t("hideReview"):t("reviewWrong")}</button>
+      </div>
+    </div>
+
+    ${exam.showWrong ? `<div class="card">
+      <h3 class="sub" style="margin-top:0">${t("reviewWrong")}</h3>
+      ${wrongList.length ? wrongHtml : `<p class="muted">${t("allCorrect")}</p>`}
+    </div>` : ""}
+  `;
+}
+function toggleWrongReview(){ exam.showWrong = !exam.showWrong; renderResults(); }
+
+/* =========================================================
+   16. INIT
+   ========================================================= */
+(function init(){
+  loadState();
+  let theme = "light";
+  try{ theme = localStorage.getItem("cf_ch1_theme") || "light"; }catch(e){}
+  document.documentElement.setAttribute("data-theme", theme);
+  document.getElementById("themeBtn").textContent = theme === "dark" ? "☀️" : "🌙";
+
+  lang = "en";
+  document.documentElement.setAttribute("lang", "en");
+  document.documentElement.setAttribute("dir", "ltr");
+  document.getElementById("langBtn").textContent = t("langLabel");
+
+  partIndex = Math.min(state.lastPart || 0, PARTS.length-1);
+  initCards();
+  renderTabs();
+  go("dashboard");
+})();
+</script>
+</body>
+</html>
